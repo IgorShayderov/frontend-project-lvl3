@@ -1,0 +1,14 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "airbnb-base",
+    "plugin:jest/recommended"
+  ],
+  "rules": {
+    "no-console": "off",
+    "import/extensions": "off",
+    "import/prefer-default-export": "off"
+  }
+}
