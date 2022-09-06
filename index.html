@@ -7,9 +7,18 @@
   <title>Document</title>
 </head>
 <body>
-  <form action="">
-    <input type="text">
-    <button type="submit">Submit</button>
+  <form class="rss-form">
+    <input
+      class="rss-form__input"
+      placholder="Ссылка RSS"
+      type="text"
+      aria-label="url"
+      autocomplete="off"
+      autofocus
+      required>
+    <button class="rss-form__submit-btn" type="submit">Add</button>
   </form>
+
+  <ul class="rss-list"></ul>
 </body>
 </html>
