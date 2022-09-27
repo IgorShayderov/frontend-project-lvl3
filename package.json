@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^5.2.0",
+    "i18next": "^21.9.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
