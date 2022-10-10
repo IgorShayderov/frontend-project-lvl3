@@ -1,3 +1,7 @@
+body {
+  padding: 0 10px;
+}
+
 .rss-form {
   position: relative;
 }
@@ -21,4 +25,31 @@
   height: 58px;
   margin-left: 10px;
   padding: 6px 10px;
+
+  &:focus {
+    background-color: rgb(114, 205, 236);
+    border-color: rgb(114, 205, 236);
+  }
+}
+
+.rss-container {
+  display: flex;
+}
+
+.rss-posts-container {
+  flex: 1;
+  min-width: 60%;
+  max-width: 60%;
+}
+
+.rss-feeds-container {
+  flex: 1;
+}
+
+.rss-posts-list {
+
+}
+
+.rss-feeds-list {
+
 }

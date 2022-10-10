@@ -1,11 +1,11 @@
 import { string } from 'yup';
 
-import { rssList } from './index';
+import { rssFeeds } from './index';
 
 const rssSchema = string()
   .trim()
   .required()
   .url()
-  .test((rss) => !rssList.includes(rss));
+  .test((rss) => !rssFeeds.includes(rss));
 
 export const validate = (input) => rssSchema.isValid(input);
