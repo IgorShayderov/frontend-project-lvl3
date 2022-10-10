@@ -26,8 +26,13 @@ module.exports = {
         },
       },
       {
-        test: /\.s?css/,
+        test: /\.scss/,
         use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
+      },
+      {
+        test: /\.css/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+
       },
       {
         test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

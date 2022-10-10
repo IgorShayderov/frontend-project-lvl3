@@ -1,7 +1,27 @@
 import { validate } from '@src/validation';
-import { rssPosts, rssFeeds } from '@src/index';
 import { loadRssStream } from '@src/api';
 import { renderRss } from '@src/render';
+import { saveRss } from '@src/rss';
+
+const listenAppStateChange = () => {
+  document.addEventListener('app-state-change', (event) => {
+    const { detail: newAppState } = event;
+    const rssBtn = document.querySelector('.rss-form__submit-btn span');
+
+    switch (newAppState) {
+    case 'loading':
+      rssBtn.textContent = '';
+      rssBtn.classList.add('loading');
+      break;
+    case 'pending':
+      rssBtn.classList.remove('loading');
+      rssBtn.textContent = 'Add';
+      break;
+    default:
+      throw new Error(`Unknown app state ${newAppState}`);
+    }
+  });
+};
 
 export const init = () => {
   const rssForm = document.querySelector('.rss-form');
@@ -28,6 +48,7 @@ export const init = () => {
           invalidateInput();
           throw new Error('Invalid input');
         })
+        .then((result) => saveRss(result))
         .then(() => renderRss())
         .catch((error) => {
           console.error(`Ошибочка! ${error.message}`);
@@ -44,4 +65,6 @@ export const init = () => {
       rssInput.classList.remove('rss-form__input_invalid');
     });
   }
+
+  listenAppStateChange();
 };

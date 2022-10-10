@@ -1,5 +1,14 @@
+@import "~bootstrap/scss/bootstrap";
+
 body {
-  padding: 0 10px;
+  --background-color: rgb(219, 237, 243);
+  --main-color: lightblue;
+  --bright-main-color: rgb(114, 205, 236);
+  --warning-color: red;
+  --black-color: black;
+
+  padding: 10px 20px;
+  background-color: var(--background-color);
 }
 
 .rss-form {
@@ -14,32 +23,37 @@ body {
 }
 
 .rss-form__input_invalid {
-  outline: 1px solid red;
+  outline: 1px solid var(--warning-color);
 }
 
 .rss-form__submit-btn {
-  border: 2px solid lightblue;
+  background-color: var(--main-color);
   border-radius: 5px;
-  background-color: lightblue;
+  border: 2px solid var(--main-color);
   font-size: 1.25rem;
   height: 58px;
   margin-left: 10px;
   padding: 6px 10px;
+  vertical-align: top;
+  width: 60px;
 
   &:focus {
-    background-color: rgb(114, 205, 236);
-    border-color: rgb(114, 205, 236);
+    background-color: var(--bright-main-color);
+    border-color: var(--black-color);
   }
 }
 
 .rss-container {
   display: flex;
+  margin: 10px 0 0;
+  gap: 20px;
+  flex-direction: column;
 }
 
 .rss-posts-container {
   flex: 1;
-  min-width: 60%;
-  max-width: 60%;
+  min-width: 100%;
+  max-width: 100%;
 }
 
 .rss-feeds-container {
@@ -47,9 +61,48 @@ body {
 }
 
 .rss-posts-list {
+  justify-content: space-between;
+  padding: 0;
+}
 
+.rss-posts-list__item {
+  display: flex;
+  margin: 10px 0;
+
+  a {
+    flex: 1;
+  }
+
+  button {
+    align-self: flex-start;
+    margin-left: 10px;
+  }
 }
 
 .rss-feeds-list {
+  list-style: none;
+  padding: 0;
+}
 
+.rss-feeds-list__item {
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+.loading {
+  @extend .spinner-border;
+  width: 40px;
+  height: 40px;
+}
+
+@media screen and (min-width: 991px) {
+  .rss-container {
+    flex-direction: row;
+  }
+
+  .rss-posts-container {
+    min-width: 60%;
+    max-width: 60%;
+  }
 }

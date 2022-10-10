@@ -1,37 +1,48 @@
 import axios from 'axios';
 
 import { parseData } from '@src/parser';
-import { rssPosts, rssFeeds } from '@src/index';
+import { rssPosts, rssFeeds, appState } from '@src/index';
 
 const baseUrl = 'https://allorigins.hexlet.app';
 
-export const loadRssStream = (rssPath) => axios.get(`${baseUrl}/raw?disableCache=true&url=${rssPath}`)
-  .then(({ data }) => {
-    const parsedDocument = parseData(data);
+export const loadRssStream = (rssPath) => {
+  appState.startLoading();
 
-    const title = parsedDocument.querySelector('title')?.textContent;
-    const link = parsedDocument.querySelector('link')?.textContent;
-    const description = parsedDocument.querySelector('description')?.textContent;
-    const language = parsedDocument.querySelector('language')?.textContent;
+  return axios.get(`${baseUrl}/raw?disableCache=true&url=${rssPath}`)
+    .then(({ data }) => {
+      const parsedDocument = parseData(data);
 
-    rssFeeds.push({
-      title,
-      link,
-      description,
-      language,
-    });
+      const title = parsedDocument.querySelector('title')?.textContent;
+      const link = parsedDocument.querySelector('link')?.textContent;
+      const description = parsedDocument.querySelector('description')?.textContent;
+      const language = parsedDocument.querySelector('language')?.textContent;
 
-    const items = parsedDocument.querySelectorAll('item');
+      const feed = {
+        title,
+        link,
+        description,
+        language,
+        posts: [],
+      };
 
-    items.forEach((item) => {
-      const itemTitle = item.querySelector('title')?.textContent;
-      const itemLink = item.querySelector('link')?.textContent;
-      const itemDescription = item.querySelector('description')?.textContent;
+      const items = parsedDocument.querySelectorAll('item');
 
-      rssPosts.push({
-        title: itemTitle,
-        link: itemLink,
-        description: itemDescription,
+      const posts = Array.from(items).map((item) => {
+        const itemTitle = item.querySelector('title')?.textContent;
+        const itemLink = item.querySelector('link')?.textContent;
+        const itemDescription = item.querySelector('description')?.textContent;
+
+        return {
+          title: itemTitle,
+          link: itemLink,
+          description: itemDescription,
+        };
       });
-    });
-  });
+
+      return {
+        feed,
+        posts,
+      };
+    })
+    .finally(() => appState.finishLoading());
+};
