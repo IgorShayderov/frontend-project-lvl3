@@ -1,5 +1,22 @@
 import { rssFeeds } from '@src/index';
 
+const renderDefaultPostsMessage = () => {
+  const rssPostsList = document.querySelector('.rss-posts-list');
+
+  rssPostsList.append('Посты отсутствуют');
+};
+
+const renderDefaultFeedsMessage = () => {
+  const rssFeedsList = document.querySelector('.rss-feeds-list');
+
+  rssFeedsList.append('Фиды отсутствуют');
+};
+
+export const renderDefaultMessages = () => {
+  renderDefaultPostsMessage();
+  renderDefaultFeedsMessage();
+};
+
 const renderPosts = (posts) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
   const rssPostsFragment = posts.reduce((rssPostsNode, { link, title }) => {
@@ -23,6 +40,10 @@ const renderPosts = (posts) => {
     return rssPostsNode;
   }, new DocumentFragment());
 
+  if (posts.length === 0) {
+    renderDefaultPostsMessage();
+  }
+
   rssPostsList.replaceChildren(rssPostsFragment);
 };
 
@@ -45,6 +66,10 @@ export const renderRss = () => new Promise((resolve, reject) => {
 
       return rssFeedsNode;
     }, new DocumentFragment());
+
+    if (rssFeeds.length === 0) {
+      renderDefaultFeedsMessage();
+    }
 
     rssFeedsList.replaceChildren(rssFeedsFragment);
     resolve();

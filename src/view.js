@@ -1,4 +1,5 @@
 import { getRssStream, watchRssStreams } from '@src/rss';
+import { renderDefaultMessages } from '@src/render';
 
 const listenAppStateChange = () => {
   document.addEventListener('app-state-change', (event) => {
@@ -56,4 +57,5 @@ export const init = () => {
 
   listenAppStateChange();
   watchRssStreams();
+  renderDefaultMessages();
 };
