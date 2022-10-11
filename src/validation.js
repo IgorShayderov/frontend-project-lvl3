@@ -8,4 +8,4 @@ const rssSchema = string()
   .url()
   .test((rss) => !rssFeeds.includes(rss));
 
-export const validate = (input) => rssSchema.isValid(input);
+export const validateRssUrl = (input) => rssSchema.isValid(input);

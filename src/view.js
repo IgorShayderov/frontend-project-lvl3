@@ -1,7 +1,4 @@
-import { validate } from '@src/validation';
-import { loadRssStream } from '@src/api';
-import { renderRss } from '@src/render';
-import { saveRss } from '@src/rss';
+import { getRssStream, watchRssStreams } from '@src/rss';
 
 const listenAppStateChange = () => {
   document.addEventListener('app-state-change', (event) => {
@@ -39,18 +36,9 @@ export const init = () => {
 
       const rssValue = getRssInputValue();
 
-      validate(rssValue)
-        .then((isValid) => {
-          if (isValid) {
-            return loadRssStream(rssValue);
-          }
-
-          invalidateInput();
-          throw new Error('Invalid input');
-        })
-        .then((result) => saveRss(result))
-        .then(() => renderRss())
+      getRssStream(rssValue)
         .catch((error) => {
+          invalidateInput();
           console.error(`Ошибочка! ${error.message}`);
         })
         .finally(() => {
@@ -67,4 +55,5 @@ export const init = () => {
   }
 
   listenAppStateChange();
+  watchRssStreams();
 };

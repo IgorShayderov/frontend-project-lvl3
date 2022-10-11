@@ -4,16 +4,13 @@ const renderPosts = (posts) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
   const rssPostsFragment = posts.reduce((rssPostsNode, { link, title }) => {
     const listItem = document.createElement('li');
+    const linkElement = document.createElement('a');
+    const button = document.createElement('button');
 
     listItem.classList.add('rss-posts-list__item');
-
-    const linkElement = document.createElement('a');
-
     linkElement.setAttribute('href', link);
     linkElement.setAttribute('target', '_blank');
     linkElement.textContent = title;
-
-    const button = document.createElement('button');
 
     button.setAttribute('type', 'button');
     button.textContent = 'Посмотреть';
@@ -34,15 +31,11 @@ export const renderRss = () => new Promise((resolve, reject) => {
     const rssFeedsList = document.querySelector('.rss-feeds-list');
     const rssFeedsFragment = rssFeeds.reduce((rssFeedsNode, { title, description, posts }) => {
       const listItem = document.createElement('li');
-
-      listItem.classList.add('rss-feeds-list__item');
-
       const header = document.createElement('h3');
-
-      header.textContent = title;
-
       const text = document.createElement('p');
 
+      listItem.classList.add('rss-feeds-list__item');
+      header.textContent = title;
       text.textContent = description;
 
       listItem.append(header, text);

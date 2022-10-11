@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { parseData } from '@src/parser';
-import { rssPosts, rssFeeds, appState } from '@src/index';
+import { appState } from '@src/index';
 
 const baseUrl = 'https://allorigins.hexlet.app';
 
@@ -13,13 +13,12 @@ export const loadRssStream = (rssPath) => {
       const parsedDocument = parseData(data);
 
       const title = parsedDocument.querySelector('title')?.textContent;
-      const link = parsedDocument.querySelector('link')?.textContent;
       const description = parsedDocument.querySelector('description')?.textContent;
       const language = parsedDocument.querySelector('language')?.textContent;
 
       const feed = {
         title,
-        link,
+        link: rssPath,
         description,
         language,
         posts: [],
