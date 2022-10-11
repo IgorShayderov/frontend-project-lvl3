@@ -90,6 +90,13 @@ body {
   }
 }
 
+.btn-primary {
+  a {
+    color: white;
+    text-decoration: none;
+  }
+}
+
 .loading {
   @extend .spinner-border;
   width: 40px;

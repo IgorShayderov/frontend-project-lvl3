@@ -10,8 +10,6 @@
 <body>
   <h1>RSS агрегатор</h1>
 
-  <p>https://news.rambler.ru/rss/holiday/</p>
-
   <form class="rss-form">
     <input
       class="rss-form__input"
@@ -25,6 +23,8 @@
       <span>Add</span>
     </button>
   </form>
+
+  <p class="mt-2">Пример: https://news.rambler.ru/rss/holiday/</p>
 
   <div class="rss-container">
     <section class="rss-posts-container">
@@ -40,5 +40,26 @@
     </aside>
 
   </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="postsModal" tabindex="-1" aria-labelledby="postsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postsModalLabel">Название</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Описание
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          <a href="#" target="_blank">Читать полностью</a>
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

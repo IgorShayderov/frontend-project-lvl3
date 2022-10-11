@@ -1,4 +1,4 @@
-import { rssFeeds } from '@src/index';
+import { rssFeeds, appState } from '@src/index';
 
 const renderDefaultPostsMessage = () => {
   const rssPostsList = document.querySelector('.rss-posts-list');
@@ -19,7 +19,7 @@ export const renderDefaultMessages = () => {
 
 const renderPosts = (posts) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
-  const rssPostsFragment = posts.reduce((rssPostsNode, { link, title }) => {
+  const rssPostsFragment = posts.reduce((rssPostsNode, { link, title, description }) => {
     const listItem = document.createElement('li');
     const linkElement = document.createElement('a');
     const button = document.createElement('button');
@@ -30,9 +30,12 @@ const renderPosts = (posts) => {
     linkElement.textContent = title;
 
     button.setAttribute('type', 'button');
+    // button.setAttribute('data-bs-toggle', 'modal');
+    // button.setAttribute('data-bs-target', '#postsModal');
     button.textContent = 'Посмотреть';
     button.classList.add('btn');
     button.classList.add('btn-primary');
+    button.addEventListener('click', () => appState.postsModal.show({ title, description, link }));
 
     listItem.append(linkElement, button);
     rssPostsNode.append(listItem);

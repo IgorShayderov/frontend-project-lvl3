@@ -53,7 +53,6 @@ export const getRssStream = (rssUrl) => {
 };
 
 export const watchRssStreams = () => {
-  console.log('inside watchRssStreams');
   const timeout = 5000;
 
   window.setTimeout(() => {

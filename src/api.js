@@ -35,6 +35,7 @@ export const loadRssStream = (rssPath) => {
           title: itemTitle,
           link: itemLink,
           description: itemDescription,
+          isReaded: false,
         };
       });
 
