@@ -20,12 +20,17 @@ export const renderDefaultMessages = () => {
 const renderPosts = (posts) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
   const rssPostsFragment = posts.reduce((rssPostsNode, post) => {
-    const { link, title, description } = post;
+    const {
+      id, link, title, description, isReaded,
+    } = post;
     const listItem = document.createElement('li');
     const linkElement = document.createElement('a');
     const button = document.createElement('button');
 
     listItem.classList.add('rss-posts-list__item');
+    listItem.classList.add('fw-bold');
+    listItem.setAttribute('data-id', id);
+
     linkElement.setAttribute('href', link);
     linkElement.setAttribute('target', '_blank');
     linkElement.textContent = title;
@@ -34,7 +39,23 @@ const renderPosts = (posts) => {
     button.textContent = 'Посмотреть';
     button.classList.add('btn');
     button.classList.add('btn-primary');
-    button.addEventListener('click', () => appState.postsModal.show({ title, description, link }));
+    button.addEventListener('click', () => {
+      appState.postsModal.show({
+        title, description, link,
+      });
+
+      if (!isReaded) {
+        post.isReaded = true;
+
+        const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
+
+        if (postNode !== null) {
+          postNode.classList.replace('fw-bold', 'fw-normal');
+        } else {
+          throw new Error(`Not found post with id ${id}`);
+        }
+      }
+    });
 
     listItem.append(linkElement, button);
     rssPostsNode.append(listItem);
