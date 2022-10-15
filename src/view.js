@@ -10,10 +10,12 @@ const listenAppStateChange = () => {
     case 'loading':
       rssBtn.textContent = '';
       rssBtn.classList.add('loading');
+      rssBtn.setAttribute('disabled', 'disabled');
       break;
     case 'pending':
       rssBtn.classList.remove('loading');
       rssBtn.textContent = 'Add';
+      rssBtn.removeAttribute('disabled');
       break;
     default:
       throw new Error(`Unknown app state ${newAppState}`);

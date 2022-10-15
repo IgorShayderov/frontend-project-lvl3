@@ -19,16 +19,26 @@ const addPostsToFeed = (feed, newPosts) => {
     const isPostExists = feed.posts.some((post) => post.title === newPost.title);
 
     if (!isPostExists) {
-      feed.posts.push(newPost);
+      feed.posts.push({
+        ...newPost,
+        feedId: feed.id,
+        isReaded: false,
+      });
     }
   });
 };
+
+let uniqueId = performance.now();
 
 export const saveRss = ({ posts, feed }) => new Promise((resolve) => {
   const isExistingFeed = isRssFeedAlreadyExists(feed);
 
   if (!isExistingFeed) {
-    rssFeeds.push(feed);
+    rssFeeds.push({
+      ...feed,
+      id: uniqueId += 1,
+      posts: [],
+    });
   }
 
   const addedFeed = isRssFeedAlreadyExists ? findFeed(feed) : feed;
