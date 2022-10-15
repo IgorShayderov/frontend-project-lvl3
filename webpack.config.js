@@ -40,7 +40,7 @@ module.exports = {
       },
       {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-        use: 'file-loader',
+        type: 'asset',
       },
     ],
   },

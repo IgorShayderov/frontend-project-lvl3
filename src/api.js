@@ -4,6 +4,7 @@ import { parseData } from '@src/parser';
 import { appState } from '@src/index';
 
 const baseUrl = 'https://allorigins.hexlet.app';
+let uniqueId = performance.now();
 
 export const loadRssStream = (rssPath) => {
   appState.startLoading();
@@ -17,6 +18,7 @@ export const loadRssStream = (rssPath) => {
       const language = parsedDocument.querySelector('language')?.textContent;
 
       const feed = {
+        id: uniqueId += 1,
         title,
         link: rssPath,
         description,
@@ -35,6 +37,7 @@ export const loadRssStream = (rssPath) => {
           title: itemTitle,
           link: itemLink,
           description: itemDescription,
+          feedId: feed.id,
           isReaded: false,
         };
       });

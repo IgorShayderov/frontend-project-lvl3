@@ -21,6 +21,13 @@ const listenAppStateChange = () => {
   });
 };
 
+const handleCopyBtnClick = (event) => {
+  const text = event.target.parentNode.textContent.trim();
+  const rssLink = text.split(' ').at(-1);
+
+  navigator.clipboard.writeText(rssLink);
+};
+
 export const init = () => {
   const rssForm = document.querySelector('.rss-form');
   const rssInput = rssForm.querySelector('.rss-form__input');
@@ -54,6 +61,8 @@ export const init = () => {
       rssInput.classList.remove('rss-form__input_invalid');
     });
   }
+
+  document.querySelector('.copy-btn').addEventListener('click', handleCopyBtnClick);
 
   listenAppStateChange();
   watchRssStreams();

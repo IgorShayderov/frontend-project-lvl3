@@ -90,6 +90,16 @@ body {
   }
 }
 
+.copy-btn {
+  background: center / contain url('@src/icons/copy.svg') no-repeat;
+  border: none;
+  display: inline;
+  height: 20px;
+  margin-left: 10px;
+  vertical-align: middle;
+  width: 20px;
+}
+
 .btn-primary {
   a {
     color: white;
