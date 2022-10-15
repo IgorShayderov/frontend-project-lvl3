@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <h1>RSS агрегатор</h1>
+  <h1 class="app-name">RSS аггрегатор</h1>
 
   <form class="rss-form">
     <input
@@ -24,19 +24,23 @@
     </button>
   </form>
 
-  <p class="mt-2">Пример: https://news.rambler.ru/rss/holiday/
+  <div class="d-flex align-items-center mt-3 mb-2">
+    <p class="example">Пример: https://news.rambler.ru/rss/holiday/</p>
+
     <button class="copy-btn"></button>
-  </p>
+  </div>
+
+  <p class="messages-field"></p>
 
   <div class="rss-container">
     <section class="rss-posts-container">
-      <h2>Посты</h2>
+      <h2 class="posts-title">Посты</h2>
 
       <ul class="rss-posts-list"></ul>
     </section>
 
     <aside class="rss-feeds-container">
-      <h2>Фиды</h2>
+      <h2 class="feeds-title">Фиды</h2>
 
       <ul class="rss-feeds-list"></ul>
     </aside>

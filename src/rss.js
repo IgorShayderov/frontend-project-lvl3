@@ -2,7 +2,6 @@
 import { rssFeeds } from '@src/index';
 import { loadRssStream } from '@src/api';
 import { renderRss } from '@src/render';
-import { validateRssUrl } from '@src/validation';
 
 const getCacheKey = () => {
   return rssFeeds.length + rssFeeds.reduce((total, { posts }) => total + posts.length, 0);
@@ -52,21 +51,13 @@ export const saveRss = ({ posts, feed }) => new Promise((resolve) => {
 
   addPostsToFeed(addedFeed, posts);
 
-  console.log({ rssFeeds });
   resolve();
 });
 
 export const getRssStream = (rssUrl) => {
   const oldCacheKey = getCacheKey();
 
-  return validateRssUrl(rssUrl)
-    .then((isValid) => {
-      if (isValid) {
-        return loadRssStream(rssUrl);
-      }
-
-      throw new Error('Invalid input');
-    })
+  return loadRssStream(rssUrl)
     .then((result) => saveRss(result))
     .then(() => {
       const newCacheKey = getCacheKey();

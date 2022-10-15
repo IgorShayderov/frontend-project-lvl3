@@ -1,15 +1,16 @@
 import { rssFeeds, appState } from '@src/index';
+import { t } from 'i18next';
 
 const renderDefaultPostsMessage = () => {
   const rssPostsList = document.querySelector('.rss-posts-list');
 
-  rssPostsList.append('Посты отсутствуют');
+  rssPostsList.append(t('emptyState.posts'));
 };
 
 const renderDefaultFeedsMessage = () => {
   const rssFeedsList = document.querySelector('.rss-feeds-list');
 
-  rssFeedsList.append('Фиды отсутствуют');
+  rssFeedsList.append(t('emptyState.feeds'));
 };
 
 export const renderDefaultMessages = () => {
@@ -52,7 +53,7 @@ const renderPosts = (posts) => {
         if (postNode !== null) {
           postNode.classList.replace('fw-bold', 'fw-normal');
         } else {
-          throw new Error(`Not found post with id ${id}`);
+          throw new Error(t('appErrors.postNotFound', id));
         }
       }
     });

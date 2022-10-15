@@ -1,4 +1,5 @@
 import { Modal } from 'bootstrap';
+import { t } from 'i18next';
 
 export default class ModalWindow {
   constructor(selector) {
@@ -7,7 +8,7 @@ export default class ModalWindow {
     if (modalNode) {
       this.modal = new Modal(modalNode);
     } else {
-      throw new Error('Invalid selector for modal window');
+      throw new Error(t('nodeSearchErrors.modal'));
     }
   }
 

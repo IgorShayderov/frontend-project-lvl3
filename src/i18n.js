@@ -1,27 +1,63 @@
 import i18next from 'i18next';
-import { setLocale } from 'yup';
-
-setLocale({
-  mixed: {
-    default: 'Não é válido',
-  },
-  number: {
-    min: ({ min }) => ({ key: 'field_too_short', values: { min } }),
-    max: ({ max }) => ({ key: 'field_too_big', values: { max } }),
-  },
-});
-
-// catch (err) {
-//   messages = err.errors.map((err) => i18next.t(err.key));
-// }
 
 export const initI18N = () => {
   i18next.init({
-    lng: 'en',
+    lng: 'ru',
     resources: {
       en: {
         translation: {
-          hz: 'hz',
+          rssLoadMessages: {
+            success: 'RSS has been successfully loaded',
+            invalidRSS: 'The resource does not have valid RSS',
+            ivalidURL: 'The link should be valid URL',
+            isExists: 'RSS уже существует',
+          },
+          nodeSearchErrors: {
+            messagesField: 'Can\'t find messages field',
+            modal: 'Modal window is not found',
+          },
+          appErrors: {
+            unknownState: 'Unknown app state {{appState}}',
+            postNotFound: 'Not found post with id {{id}}',
+          },
+          emptyState: {
+            posts: 'Posts are absent',
+            feeds: 'Feeds are absent',
+          },
+          basic: {
+            example: 'Example',
+            appName: 'RSS aggregator',
+            feeds: 'Feeds',
+            posts: 'Posts',
+          },
+        },
+      },
+      ru: {
+        translation: {
+          rssLoadMessages: {
+            success: 'RSS успешно загружен',
+            invalidRSS: 'Ресурс не содержит валидный RSS',
+            ivalidURL: 'Ссылка должна быть валидным URL',
+            isExists: 'RSS уже существует',
+          },
+          nodeSearchErrors: {
+            messagesField: 'Не удалось найти поле для сообщений',
+            modal: 'Не удалось найти модальное окно',
+          },
+          appErrors: {
+            unknownState: 'Нераспознанное состояние приложения {{appState}}',
+            postNotFound: 'Не найден пост с идентификатором {{id}}',
+          },
+          emptyState: {
+            posts: 'Посты отсутствуют',
+            feeds: 'Фиды отсутствуют',
+          },
+          basic: {
+            example: 'Пример',
+            appName: 'RSS агрегатор',
+            feeds: 'Фиды',
+            posts: 'Посты',
+          },
         },
       },
     },
