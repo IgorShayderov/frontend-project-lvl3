@@ -29,11 +29,11 @@ const renderPosts = (posts) => {
     const button = document.createElement('button');
 
     listItem.classList.add('rss-posts-list__item');
-    listItem.classList.add('fw-bold');
     listItem.setAttribute('data-id', id);
 
     linkElement.setAttribute('href', link);
     linkElement.setAttribute('target', '_blank');
+    linkElement.classList.add('fw-bold');
     linkElement.textContent = title;
 
     button.setAttribute('type', 'button');
@@ -51,7 +51,7 @@ const renderPosts = (posts) => {
         const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
 
         if (postNode !== null) {
-          postNode.classList.replace('fw-bold', 'fw-normal');
+          postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
         } else {
           throw new Error(t('appErrors.postNotFound', id));
         }
