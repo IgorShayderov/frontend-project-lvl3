@@ -37,7 +37,7 @@ const renderPosts = (posts) => {
     linkElement.textContent = title;
 
     button.setAttribute('type', 'button');
-    button.textContent = 'Посмотреть';
+    button.textContent = 'Просмотр';
     button.classList.add('btn');
     button.classList.add('btn-primary');
     button.addEventListener('click', () => {

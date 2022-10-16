@@ -52,7 +52,7 @@ const setMessage = (message, status = 'success') => {
 };
 
 const fillAppTitles = () => {
-  const link = 'https://news.rambler.ru/rss/holiday/';
+  const link = 'https://ru.hexlet.io/lessons.rss';
 
   document.querySelector('.app-name').textContent = t('basic.appName');
   document.querySelector('.posts-title').textContent = t('basic.posts');
