@@ -4,14 +4,24 @@ import { parseData } from '@src/parser';
 import { appState } from '@src/index';
 import { t } from 'i18next';
 
-const baseUrl = 'https://allorigins.hexlet.app';
+const getProxiedUrl = (path) => {
+  const baseURL = 'https://allorigins.hexlet.app/get';
+  const proxiedURL = new URL(baseURL);
+
+  proxiedURL.searchParams.set('disableCache', true);
+  proxiedURL.searchParams.set('url', path);
+
+  return proxiedURL.toString();
+};
 
 export const loadRssStream = (rssPath) => {
   appState.startLoading();
 
-  return axios.get(`${baseUrl}/raw?disableCache=true&url=${rssPath}`)
+  console.log(getProxiedUrl(rssPath));
+
+  return axios.get(getProxiedUrl(rssPath))
     .then(({ data }) => {
-      const parsedDocument = parseData(data);
+      const parsedDocument = parseData(data.contents);
 
       if (parsedDocument.documentElement.tagName !== 'rss') {
         throw new Error(t('rssLoadMessages.invalidRSS'));
@@ -48,7 +58,7 @@ export const loadRssStream = (rssPath) => {
       };
     })
     .catch(() => {
-      throw new Error(`${baseUrl}/raw?disableCache=true&url=${rssPath}`);
+      throw new Error(t('rssLoadMessages.invalidRSS'));
     })
     .finally(() => appState.finishLoading());
 };
