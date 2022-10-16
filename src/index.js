@@ -1,7 +1,7 @@
 import '@src/stylesheets/main.scss';
 
-import { initI18N } from '@src/i18n';
-import { init } from '@src/view';
+import init from '@src/view';
+import initI18N from '@src/i18n';
 import ModalWindow from '@src/modal';
 
 export const rssFeeds = [];

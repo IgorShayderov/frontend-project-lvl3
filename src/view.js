@@ -1,7 +1,8 @@
+import { t } from 'i18next';
+
 import { getRssStream, watchRssStreams } from '@src/rss';
 import { renderDefaultMessages } from '@src/render';
-import { validateRssUrl } from '@src/validation';
-import { t } from 'i18next';
+import validateRssUrl from '@src/validation';
 
 const listenAppStateChange = () => {
   document.addEventListener('app-state-change', (event) => {
@@ -9,18 +10,18 @@ const listenAppStateChange = () => {
     const rssBtn = document.querySelector('.rss-form__submit-btn span');
 
     switch (newAppState) {
-    case 'loading':
-      rssBtn.textContent = '';
-      rssBtn.classList.add('loading');
-      rssBtn.setAttribute('disabled', 'disabled');
-      break;
-    case 'pending':
-      rssBtn.classList.remove('loading');
-      rssBtn.textContent = 'Add';
-      rssBtn.removeAttribute('disabled');
-      break;
-    default:
-      throw new Error(t('appErrors.unknownState', { appState: newAppState }));
+      case 'loading':
+        rssBtn.textContent = '';
+        rssBtn.classList.add('loading');
+        rssBtn.setAttribute('disabled', 'disabled');
+        break;
+      case 'pending':
+        rssBtn.classList.remove('loading');
+        rssBtn.textContent = 'Add';
+        rssBtn.removeAttribute('disabled');
+        break;
+      default:
+        throw new Error(t('appErrors.unknownState', { appState: newAppState }));
     }
   });
 };
@@ -60,7 +61,7 @@ const fillAppTitles = () => {
   document.querySelector('.example').textContent = `${t('basic.example')}: ${link}`;
 };
 
-export const init = () => {
+const init = () => {
   const rssForm = document.querySelector('.rss-form');
   const rssInput = rssForm.querySelector('.rss-form__input');
 
@@ -111,3 +112,5 @@ export const init = () => {
   watchRssStreams();
   renderDefaultMessages();
 };
+
+export default init;

@@ -16,4 +16,6 @@ const rssSchema = string()
     throw new Error(t('rssLoadMessages.isExists'));
   });
 
-export const validateRssUrl = (input) => rssSchema.isValid(input);
+const validateRssUrl = (input) => rssSchema.isValid(input);
+
+export default validateRssUrl;

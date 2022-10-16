@@ -1,7 +1,7 @@
 /* eslint-disable arrow-body-style */
 import { rssFeeds } from '@src/index';
-import { loadRssStream } from '@src/api';
 import { renderRss } from '@src/render';
+import loadRssStream from '@src/api';
 
 const getCacheKey = () => {
   return rssFeeds.length + rssFeeds.reduce((total, { posts }) => total + posts.length, 0);

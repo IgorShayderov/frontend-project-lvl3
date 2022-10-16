@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 
-export const initI18N = () => {
+const initI18N = () => {
   i18next.init({
     lng: 'ru',
     resources: {
@@ -65,3 +65,5 @@ export const initI18N = () => {
     },
   });
 };
+
+export default initI18N;

@@ -1,8 +1,8 @@
 import axios from 'axios';
-
-import { parseData } from '@src/parser';
-import { appState } from '@src/index';
 import { t } from 'i18next';
+
+import { appState } from '@src/index';
+import parseData from '@src/parser';
 
 const getProxiedUrl = (path) => {
   const baseURL = 'https://allorigins.hexlet.app/get';
@@ -14,7 +14,7 @@ const getProxiedUrl = (path) => {
   return proxiedURL.toString();
 };
 
-export const loadRssStream = (rssPath) => {
+const loadRssStream = (rssPath) => {
   appState.startLoading();
 
   return axios.get(getProxiedUrl(rssPath))
@@ -62,3 +62,5 @@ export const loadRssStream = (rssPath) => {
     })
     .finally(() => appState.finishLoading());
 };
+
+export default loadRssStream;
