@@ -34,7 +34,7 @@ const handleCopyBtnClick = (event) => {
 
 /**
  * Sets message in special HTML node
- * @param {*} message - Text of message
+ * @param {string} message - Text of message
  * @param {'success' | 'danger'} status - Message status
  */
 const setMessage = (message, status = 'success') => {

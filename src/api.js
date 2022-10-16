@@ -48,7 +48,7 @@ export const loadRssStream = (rssPath) => {
       };
     })
     .catch(() => {
-      throw new Error(t('rssLoadMessages.invalidRSS'));
+      throw new Error(`${baseUrl}/raw?disableCache=true&url=${rssPath}`);
     })
     .finally(() => appState.finishLoading());
 };
