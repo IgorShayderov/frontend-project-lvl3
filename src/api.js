@@ -17,8 +17,6 @@ const getProxiedUrl = (path) => {
 export const loadRssStream = (rssPath) => {
   appState.startLoading();
 
-  console.log(getProxiedUrl(rssPath));
-
   return axios.get(getProxiedUrl(rssPath))
     .then(({ data }) => {
       const parsedDocument = parseData(data.contents);
