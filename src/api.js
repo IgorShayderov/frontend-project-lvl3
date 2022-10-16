@@ -18,7 +18,12 @@ export const loadRssStream = (rssPath) => {
   appState.startLoading();
 
   return axios.get(getProxiedUrl(rssPath))
+    .catch(() => { throw new Error(t('rssLoadMessages.networkError')); })
     .then(({ data }) => {
+      if (data.status?.error) {
+        throw new Error(t('rssLoadMessages.networkError'));
+      }
+
       const parsedDocument = parseData(data.contents);
 
       if (parsedDocument.documentElement.tagName !== 'rss') {
@@ -54,9 +59,6 @@ export const loadRssStream = (rssPath) => {
         feed,
         posts,
       };
-    })
-    .catch(() => {
-      throw new Error(t('rssLoadMessages.invalidRSS'));
     })
     .finally(() => appState.finishLoading());
 };

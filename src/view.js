@@ -89,7 +89,7 @@ export const init = () => {
         })
         .catch((error) => {
           invalidateInput();
-          setMessage(error, 'danger');
+          setMessage(error.message, 'danger');
         })
         .finally(() => {
           rssInput.focus();

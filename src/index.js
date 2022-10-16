@@ -4,6 +4,8 @@ import { initI18N } from '@src/i18n';
 import { init } from '@src/view';
 import ModalWindow from '@src/modal';
 
+export const rssFeeds = [];
+
 export const appState = {
   currentState: 'pending',
   availableStates: ['loading', 'pending'],
@@ -26,8 +28,6 @@ export const appState = {
     this.changeAppState('pending');
   },
 };
-
-export const rssFeeds = [];
 
 initI18N();
 init();

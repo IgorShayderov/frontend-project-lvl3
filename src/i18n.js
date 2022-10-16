@@ -11,6 +11,7 @@ export const initI18N = () => {
             invalidRSS: 'The resource does not have valid RSS',
             ivalidURL: 'The link should be valid URL',
             isExists: 'RSS уже существует',
+            networkError: 'Network error',
           },
           nodeSearchErrors: {
             messagesField: 'Can\'t find messages field',
@@ -39,6 +40,7 @@ export const initI18N = () => {
             invalidRSS: 'Ресурс не содержит валидный RSS',
             ivalidURL: 'Ссылка должна быть валидным URL',
             isExists: 'RSS уже существует',
+            networkError: 'Ошибка сети',
           },
           nodeSearchErrors: {
             messagesField: 'Не удалось найти поле для сообщений',
