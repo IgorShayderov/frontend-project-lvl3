@@ -1,16 +1,15 @@
 import { rssFeeds, appState } from '@src/index';
-import { t } from 'i18next';
 
 const renderDefaultPostsMessage = () => {
   const rssPostsList = document.querySelector('.rss-posts-list');
 
-  rssPostsList.append(t('emptyState.posts'));
+  rssPostsList.append(appState.i18n.t('emptyState.posts'));
 };
 
 const renderDefaultFeedsMessage = () => {
   const rssFeedsList = document.querySelector('.rss-feeds-list');
 
-  rssFeedsList.append(t('emptyState.feeds'));
+  rssFeedsList.append(appState.i18n.t('emptyState.feeds'));
 };
 
 export const renderDefaultMessages = () => {
@@ -19,6 +18,7 @@ export const renderDefaultMessages = () => {
 };
 
 const renderPosts = (posts) => {
+  const { i18n } = appState;
   const rssPostsList = document.querySelector('.rss-posts-list');
   const rssPostsFragment = posts.reduce((rssPostsNode, post) => {
     const {
@@ -53,7 +53,7 @@ const renderPosts = (posts) => {
         if (postNode !== null) {
           postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
         } else {
-          throw new Error(t('appErrors.postNotFound', id));
+          throw new Error(i18n.t('appErrors.postNotFound', id));
         }
       }
     });

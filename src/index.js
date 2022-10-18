@@ -10,6 +10,7 @@ export const appState = {
   currentState: 'pending',
   availableStates: ['loading', 'pending'],
   postsModal: new ModalWindow('#postsModal'),
+  i18n: null,
   changeAppState(newState) {
     if (this.isValidState(newState)) {
       const event = new CustomEvent('app-state-change', { detail: newState });
@@ -29,5 +30,7 @@ export const appState = {
   },
 };
 
-initI18N();
-init();
+initI18N().then((i18nInstance) => {
+  appState.i18n = i18nInstance;
+  init();
+});

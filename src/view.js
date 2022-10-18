@@ -1,8 +1,7 @@
-import { t } from 'i18next';
-
 import { getRssStream, watchRssStreams } from '@src/rss';
 import { renderDefaultMessages } from '@src/render';
 import validateRssUrl from '@src/validation';
+import { appState } from '@src/index';
 
 const listenAppStateChange = () => {
   document.addEventListener('app-state-change', (event) => {
@@ -21,7 +20,7 @@ const listenAppStateChange = () => {
         rssBtn.removeAttribute('disabled');
         break;
       default:
-        throw new Error(t('appErrors.unknownState', { appState: newAppState }));
+        throw new Error(appState.i18n.t('appErrors.unknownState', { appState: newAppState }));
     }
   });
 };
@@ -48,17 +47,17 @@ const setMessage = (message, status = 'success') => {
   if (messagesField !== null) {
     messagesField.textContent = message;
   } else {
-    throw new Error(t('nodeSearchErrors.messagesField'));
+    throw new Error(appState.i18n.t('nodeSearchErrors.messagesField'));
   }
 };
 
 const fillAppTitles = () => {
   const link = 'https://ru.hexlet.io/lessons.rss';
 
-  document.querySelector('.app-name').textContent = t('basic.appName');
-  document.querySelector('.posts-title').textContent = t('basic.posts');
-  document.querySelector('.feeds-title').textContent = t('basic.feeds');
-  document.querySelector('.example').textContent = `${t('basic.example')}: ${link}`;
+  document.querySelector('.app-name').textContent = appState.i18n.t('basic.appName');
+  document.querySelector('.posts-title').textContent = appState.i18n.t('basic.posts');
+  document.querySelector('.feeds-title').textContent = appState.i18n.t('basic.feeds');
+  document.querySelector('.example').textContent = `${appState.i18n.t('basic.example')}: ${link}`;
 };
 
 const init = () => {
@@ -83,10 +82,10 @@ const init = () => {
             return getRssStream(rssValue);
           }
 
-          throw new Error(t('rssLoadMessages.ivalidURL'));
+          throw new Error(appState.i18n.t('rssLoadMessages.ivalidURL'));
         })
         .then(() => {
-          setMessage(t('rssLoadMessages.success'), 'success');
+          setMessage(appState.i18n.t('rssLoadMessages.success'), 'success');
         })
         .catch((error) => {
           invalidateInput();

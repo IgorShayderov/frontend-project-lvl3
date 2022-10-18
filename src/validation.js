@@ -1,5 +1,5 @@
 import { string } from 'yup';
-import { t } from 'i18next';
+import { appState } from '@src/index';
 
 import { rssFeeds } from './index';
 
@@ -13,7 +13,7 @@ const rssSchema = string()
     if (isValid) {
       return true;
     }
-    throw new Error(t('rssLoadMessages.isExists'));
+    throw new Error(appState.i18n.t('rssLoadMessages.isExists'));
   });
 
 const validateRssUrl = (input) => rssSchema.isValid(input);

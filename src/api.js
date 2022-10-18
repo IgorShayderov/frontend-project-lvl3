@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { t } from 'i18next';
 
 import { appState } from '@src/index';
 import parseData from '@src/parser';
@@ -15,19 +14,20 @@ const getProxiedUrl = (path) => {
 };
 
 const loadRssStream = (rssPath) => {
+  const { i18n } = appState;
   appState.startLoading();
 
   return axios.get(getProxiedUrl(rssPath))
-    .catch(() => { throw new Error(t('rssLoadMessages.networkError')); })
+    .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
     .then(({ data }) => {
       if (data.status?.error) {
-        throw new Error(t('rssLoadMessages.networkError'));
+        throw new Error(i18n.t('rssLoadMessages.networkError'));
       }
 
       const parsedDocument = parseData(data.contents);
 
       if (parsedDocument.documentElement.tagName !== 'rss') {
-        throw new Error(t('rssLoadMessages.invalidRSS'));
+        throw new Error(i18n.t('rssLoadMessages.invalidRSS'));
       }
 
       const title = parsedDocument.querySelector('title')?.textContent;
