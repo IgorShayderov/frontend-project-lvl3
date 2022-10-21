@@ -21,7 +21,6 @@ const initI18N = () => {
               modal: 'Modal window is not found',
             },
             appErrors: {
-              unknownState: 'Unknown app state {{appState}}',
               postNotFound: 'Not found post with id {{id}}',
             },
             emptyState: {
@@ -50,7 +49,6 @@ const initI18N = () => {
               modal: 'Не удалось найти модальное окно',
             },
             appErrors: {
-              unknownState: 'Нераспознанное состояние приложения {{appState}}',
               postNotFound: 'Не найден пост с идентификатором {{id}}',
             },
             emptyState: {

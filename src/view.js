@@ -3,28 +3,20 @@ import { renderDefaultMessages } from '@src/render';
 import validateRssUrl from '@src/validation';
 import initI18N from '@src/i18n';
 
-const listenAppStateChange = (appState) => {
-  const { i18n } = appState;
+const startLoading = () => {
+  const rssBtn = document.querySelector('.rss-form__submit-btn span');
 
-  document.addEventListener('app-state-change', (event) => {
-    const { detail: newAppState } = event;
-    const rssBtn = document.querySelector('.rss-form__submit-btn span');
+  rssBtn.textContent = '';
+  rssBtn.classList.add('loading');
+  rssBtn.setAttribute('disabled', 'disabled');
+};
 
-    switch (newAppState) {
-      case 'loading':
-        rssBtn.textContent = '';
-        rssBtn.classList.add('loading');
-        rssBtn.setAttribute('disabled', 'disabled');
-        break;
-      case 'pending':
-        rssBtn.classList.remove('loading');
-        rssBtn.textContent = 'Add';
-        rssBtn.removeAttribute('disabled');
-        break;
-      default:
-        throw new Error(i18n.t('appErrors.unknownState', { appState: newAppState }));
-    }
-  });
+const endLoading = () => {
+  const rssBtn = document.querySelector('.rss-form__submit-btn span');
+
+  rssBtn.classList.remove('loading');
+  rssBtn.textContent = 'Add';
+  rssBtn.removeAttribute('disabled');
 };
 
 const handleCopyBtnClick = (event) => {
@@ -66,27 +58,8 @@ const fillAppTitles = (appState) => {
 
 const init = () => {
   const appState = {
-    currentState: 'pending',
-    availableStates: ['loading', 'pending'],
     i18n: null,
     rssFeeds: [],
-    changeAppState(newState) {
-      if (this.isValidState(newState)) {
-        const event = new CustomEvent('app-state-change', { detail: newState });
-
-        this.currentState = newState;
-        document.dispatchEvent(event);
-      }
-    },
-    isValidState(state) {
-      return this.availableStates.includes(state);
-    },
-    startLoading() {
-      this.changeAppState('loading');
-    },
-    finishLoading() {
-      this.changeAppState('pending');
-    },
   };
 
   initI18N()
@@ -111,6 +84,8 @@ const init = () => {
 
           validateRssUrl(rssValue, appState)
             .then((isValid) => {
+              startLoading();
+
               if (isValid) {
                 return getRssStream(rssValue, appState);
               }
@@ -127,6 +102,7 @@ const init = () => {
             .finally(() => {
               rssInput.focus();
               rssInput.value = '';
+              endLoading();
             });
         });
       }
@@ -140,7 +116,6 @@ const init = () => {
       document.querySelector('.copy-btn').addEventListener('click', handleCopyBtnClick);
 
       fillAppTitles(appState);
-      listenAppStateChange(appState);
       watchRssStreams(appState);
       renderDefaultMessages(appState);
     });

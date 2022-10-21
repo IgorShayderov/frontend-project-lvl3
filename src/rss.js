@@ -58,15 +58,11 @@ export const getRssStream = (rssUrl, appState) => {
     resolve();
   });
 
-  appState.startLoading();
-
   const { i18n } = appState;
   const oldCacheKey = getCacheKey();
 
   return loadRssStream(rssUrl)
-    .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
     .then((data) => parseData(data))
-    .catch(() => { throw new Error(i18n.t('rssLoadMessages.invalidRSS')); })
     .then((result) => saveRss(result, rssUrl))
     .then(() => {
       const newCacheKey = getCacheKey();
@@ -75,7 +71,9 @@ export const getRssStream = (rssUrl, appState) => {
         renderRss(appState);
       }
     })
-    .finally(() => appState.finishLoading());
+    .catch((error) => {
+      throw new Error(i18n.t(error.message));
+    });
 };
 
 export const watchRssStreams = (appState) => {
