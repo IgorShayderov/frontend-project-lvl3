@@ -1,23 +1,39 @@
-import { rssFeeds, appState } from '@src/index';
+import { Modal } from 'bootstrap';
 
-const renderDefaultPostsMessage = () => {
+const showModal = ({ title, description, link }) => {
+  const modalNode = document.querySelector('#postsModal');
+  const modal = new Modal(modalNode);
+  const titleNode = document.querySelector('#postsModalLabel');
+  const descriptionNode = document.querySelector('.modal-body');
+  const showMoreLink = document.querySelector('.btn-primary a');
+
+  titleNode.textContent = title;
+  descriptionNode.textContent = description;
+  showMoreLink.setAttribute('href', link);
+
+  modal.show();
+};
+
+const renderDefaultPostsMessage = (appState) => {
+  const { i18n } = appState;
   const rssPostsList = document.querySelector('.rss-posts-list');
 
-  rssPostsList.append(appState.i18n.t('emptyState.posts'));
+  rssPostsList.append(i18n.t('emptyState.posts'));
 };
 
-const renderDefaultFeedsMessage = () => {
+const renderDefaultFeedsMessage = (appState) => {
+  const { i18n } = appState;
   const rssFeedsList = document.querySelector('.rss-feeds-list');
 
-  rssFeedsList.append(appState.i18n.t('emptyState.feeds'));
+  rssFeedsList.append(i18n.t('emptyState.feeds'));
 };
 
-export const renderDefaultMessages = () => {
-  renderDefaultPostsMessage();
-  renderDefaultFeedsMessage();
+export const renderDefaultMessages = (appState) => {
+  renderDefaultPostsMessage(appState);
+  renderDefaultFeedsMessage(appState);
 };
 
-const renderPosts = (posts) => {
+const renderPosts = (posts, appState) => {
   const { i18n } = appState;
   const rssPostsList = document.querySelector('.rss-posts-list');
   const rssPostsFragment = posts.reduce((rssPostsNode, post) => {
@@ -41,7 +57,7 @@ const renderPosts = (posts) => {
     button.classList.add('btn');
     button.classList.add('btn-primary');
     button.addEventListener('click', () => {
-      appState.postsModal.show({
+      showModal({
         title, description, link,
       });
 
@@ -53,7 +69,7 @@ const renderPosts = (posts) => {
         if (postNode !== null) {
           postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
         } else {
-          throw new Error(i18n.t('appErrors.postNotFound', id));
+          throw new Error(i18n.t('appErrors.postNotFound', { id }));
         }
       }
     });
@@ -71,27 +87,28 @@ const renderPosts = (posts) => {
   rssPostsList.replaceChildren(rssPostsFragment);
 };
 
-export const renderRss = () => new Promise((resolve, reject) => {
+export const renderRss = (appState) => new Promise((resolve, reject) => {
   try {
     const rssFeedsList = document.querySelector('.rss-feeds-list');
-    const rssFeedsFragment = rssFeeds.reduce((rssFeedsNode, { title, description, posts }) => {
-      const listItem = document.createElement('li');
-      const header = document.createElement('h3');
-      const text = document.createElement('p');
+    const rssFeedsFragment = appState.rssFeeds
+      .reduce((rssFeedsNode, { title, description, posts }) => {
+        const listItem = document.createElement('li');
+        const header = document.createElement('h3');
+        const text = document.createElement('p');
 
-      listItem.classList.add('rss-feeds-list__item');
-      header.textContent = title;
-      text.textContent = description;
+        listItem.classList.add('rss-feeds-list__item');
+        header.textContent = title;
+        text.textContent = description;
 
-      listItem.append(header, text);
-      rssFeedsNode.append(listItem);
+        listItem.append(header, text);
+        rssFeedsNode.append(listItem);
 
-      renderPosts(posts);
+        renderPosts(posts, appState);
 
-      return rssFeedsNode;
-    }, new DocumentFragment());
+        return rssFeedsNode;
+      }, new DocumentFragment());
 
-    if (rssFeeds.length === 0) {
+    if (appState.rssFeeds.length === 0) {
       renderDefaultFeedsMessage();
     }
 

@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-import { appState } from '@src/index';
-import parseData from '@src/parser';
-
 const getProxiedUrl = (path) => {
   const baseURL = 'https://allorigins.hexlet.app/get';
   const proxiedURL = new URL(baseURL);
@@ -13,54 +10,13 @@ const getProxiedUrl = (path) => {
   return proxiedURL.toString();
 };
 
-const loadRssStream = (rssPath) => {
-  const { i18n } = appState;
-  appState.startLoading();
+const loadRssStream = (rssPath) => axios.get(getProxiedUrl(rssPath))
+  .then(({ data }) => {
+    if (data.status?.error) {
+      throw new Error('Network error');
+    }
 
-  return axios.get(getProxiedUrl(rssPath))
-    .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
-    .then(({ data }) => {
-      if (data.status?.error) {
-        throw new Error(i18n.t('rssLoadMessages.networkError'));
-      }
-
-      const parsedDocument = parseData(data.contents);
-
-      if (parsedDocument.documentElement.tagName !== 'rss') {
-        throw new Error(i18n.t('rssLoadMessages.invalidRSS'));
-      }
-
-      const title = parsedDocument.querySelector('title')?.textContent;
-      const description = parsedDocument.querySelector('description')?.textContent;
-      const language = parsedDocument.querySelector('language')?.textContent;
-
-      const feed = {
-        title,
-        link: rssPath,
-        description,
-        language,
-      };
-
-      const items = parsedDocument.querySelectorAll('item');
-
-      const posts = Array.from(items).map((item) => {
-        const itemTitle = item.querySelector('title')?.textContent;
-        const itemLink = item.querySelector('link')?.textContent;
-        const itemDescription = item.querySelector('description')?.textContent;
-
-        return {
-          title: itemTitle,
-          link: itemLink,
-          description: itemDescription,
-        };
-      });
-
-      return {
-        feed,
-        posts,
-      };
-    })
-    .finally(() => appState.finishLoading());
-};
+    return data.contents;
+  });
 
 export default loadRssStream;

@@ -1,84 +1,94 @@
 /* eslint-disable arrow-body-style */
-import { rssFeeds } from '@src/index';
 import { renderRss } from '@src/render';
 import loadRssStream from '@src/api';
+import parseData from '@src/parser';
 
-const getCacheKey = () => {
-  return rssFeeds.length + rssFeeds.reduce((total, { posts }) => total + posts.length, 0);
-};
+export const getRssStream = (rssUrl, appState) => {
+  const getCacheKey = () => {
+    const postsCount = appState.rssFeeds.reduce((total, { posts }) => total + posts.length, 0);
 
-const isRssFeedAlreadyExists = ({ title, link }) => {
-  return rssFeeds.some((rssFeed) => rssFeed.title === title && rssFeed.link === link);
-};
+    return appState.rssFeeds.length + postsCount;
+  };
 
-const findFeed = ({ title, link }) => {
-  return rssFeeds.find((existingFeed) => {
-    return existingFeed.title === title && existingFeed.link === link;
-  });
-};
+  const isRssFeedAlreadyExists = ({ title }) => {
+    return appState.rssFeeds.some((rssFeed) => rssFeed.title === title);
+  };
 
-let uniquePostId = performance.now();
+  const findFeed = ({ title }) => {
+    return appState.rssFeeds.find((existingFeed) => {
+      return existingFeed.title === title;
+    });
+  };
 
-const addPostsToFeed = (feed, newPosts) => {
-  newPosts.forEach((newPost) => {
-    const isPostExists = feed.posts.some((post) => post.title === newPost.title);
+  let uniquePostId = performance.now();
 
-    if (!isPostExists) {
-      feed.posts.push({
-        ...newPost,
-        id: uniquePostId += 1,
-        feedId: feed.id,
-        isReaded: false,
+  const addPostsToFeed = (feed, newPosts) => {
+    newPosts.forEach((newPost) => {
+      const isPostExists = feed.posts.some((post) => post.title === newPost.title);
+
+      if (!isPostExists) {
+        feed.posts.push({
+          ...newPost,
+          id: uniquePostId += 1,
+          feedId: feed.id,
+          isReaded: false,
+        });
+      }
+    });
+  };
+
+  let uniqueFeedId = performance.now() * Math.random();
+
+  const saveRss = ({ posts, feed }, link) => new Promise((resolve) => {
+    const isExistingFeed = isRssFeedAlreadyExists(feed);
+
+    if (!isExistingFeed) {
+      appState.rssFeeds.push({
+        ...feed,
+        id: uniqueFeedId += 1,
+        posts: [],
+        link,
       });
     }
+
+    const addedFeed = isRssFeedAlreadyExists ? findFeed(feed) : feed;
+
+    addPostsToFeed(addedFeed, posts);
+
+    resolve();
   });
-};
 
-let uniqueFeedId = performance.now() * Math.random();
+  appState.startLoading();
 
-export const saveRss = ({ posts, feed }) => new Promise((resolve) => {
-  const isExistingFeed = isRssFeedAlreadyExists(feed);
-
-  if (!isExistingFeed) {
-    rssFeeds.push({
-      ...feed,
-      id: uniqueFeedId += 1,
-      posts: [],
-    });
-  }
-
-  const addedFeed = isRssFeedAlreadyExists ? findFeed(feed) : feed;
-
-  addPostsToFeed(addedFeed, posts);
-
-  resolve();
-});
-
-export const getRssStream = (rssUrl) => {
+  const { i18n } = appState;
   const oldCacheKey = getCacheKey();
 
   return loadRssStream(rssUrl)
-    .then((result) => saveRss(result))
+    .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
+    .then((data) => parseData(data))
+    .catch(() => { throw new Error(i18n.t('rssLoadMessages.invalidRSS')); })
+    .then((result) => saveRss(result, rssUrl))
     .then(() => {
       const newCacheKey = getCacheKey();
 
       if (oldCacheKey !== newCacheKey) {
-        renderRss();
+        renderRss(appState);
       }
-    });
+    })
+    .finally(() => appState.finishLoading());
 };
 
-export const watchRssStreams = () => {
+export const watchRssStreams = (appState) => {
   const timeout = 5000;
 
   window.setTimeout(() => {
-    rssFeeds.forEach((feed) => {
+    appState.rssFeeds.forEach((feed) => {
       return new Promise((resolve) => {
-        getRssStream(feed.link)
+        getRssStream(feed.link, appState)
           .then(() => resolve());
       });
     });
 
-    watchRssStreams();
+    watchRssStreams(appState);
   }, timeout);
 };

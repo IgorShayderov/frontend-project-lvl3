@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/IgorShayderov/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/IgorShayderov/frontend-project-lvl3/actions)",
+  "description": "RSS Aggregator",
   "main": "index.js",
   "dependencies": {
     "@popperjs/core": "^2.11.6",
