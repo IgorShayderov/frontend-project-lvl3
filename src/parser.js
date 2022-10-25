@@ -19,8 +19,8 @@ const parseData = (data) => {
   const items = parsedDocument.querySelectorAll('item');
 
   const posts = Array.from(items).map((item) => {
-    const itemTitle = item.querySelector('title')?.textContent;
-    const itemLink = item.querySelector('link')?.textContent;
+    const itemTitle = item.querySelector('title').textContent;
+    const itemLink = item.querySelector('link').textContent;
     const itemDescription = item.querySelector('description')?.textContent;
 
     return {

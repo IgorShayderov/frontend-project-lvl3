@@ -1,4 +1,6 @@
 /* eslint-disable arrow-body-style */
+import { uniqueId } from 'lodash'
+
 import { renderRss } from '@src/render';
 import loadRssStream from '@src/api';
 import parseData from '@src/parser';
@@ -20,7 +22,7 @@ export const getRssStream = (rssUrl, appState) => {
     });
   };
 
-  let uniquePostId = performance.now();
+  let uniquePostId = uniqueId();
 
   const addPostsToFeed = (feed, newPosts) => {
     newPosts.forEach((newPost) => {
@@ -37,9 +39,9 @@ export const getRssStream = (rssUrl, appState) => {
     });
   };
 
-  let uniqueFeedId = performance.now() * Math.random();
+  let uniqueFeedId = uniqueId();
 
-  const saveRss = ({ posts, feed }, link) => new Promise((resolve) => {
+  const saveRss = ({ posts, feed }, link) => {
     const isExistingFeed = isRssFeedAlreadyExists(feed);
 
     if (!isExistingFeed) {
@@ -54,9 +56,7 @@ export const getRssStream = (rssUrl, appState) => {
     const addedFeed = isRssFeedAlreadyExists ? findFeed(feed) : feed;
 
     addPostsToFeed(addedFeed, posts);
-
-    resolve();
-  });
+  };
 
   const { i18n } = appState;
   const oldCacheKey = getCacheKey();

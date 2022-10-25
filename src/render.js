@@ -87,34 +87,29 @@ const renderPosts = (posts, appState) => {
   rssPostsList.replaceChildren(rssPostsFragment);
 };
 
-export const renderRss = (appState) => new Promise((resolve, reject) => {
-  try {
-    const rssFeedsList = document.querySelector('.rss-feeds-list');
-    const rssFeedsFragment = appState.rssFeeds
-      .reduce((rssFeedsNode, { title, description, posts }) => {
-        const listItem = document.createElement('li');
-        const header = document.createElement('h3');
-        const text = document.createElement('p');
+export const renderRss = (appState) => {
+  const rssFeedsList = document.querySelector('.rss-feeds-list');
+  const rssFeedsFragment = appState.rssFeeds
+    .reduce((rssFeedsNode, { title, description, posts }) => {
+      const listItem = document.createElement('li');
+      const header = document.createElement('h3');
+      const text = document.createElement('p');
 
-        listItem.classList.add('rss-feeds-list__item');
-        header.textContent = title;
-        text.textContent = description;
+      listItem.classList.add('rss-feeds-list__item');
+      header.textContent = title;
+      text.textContent = description;
 
-        listItem.append(header, text);
-        rssFeedsNode.append(listItem);
+      listItem.append(header, text);
+      rssFeedsNode.append(listItem);
 
-        renderPosts(posts, appState);
+      renderPosts(posts, appState);
 
-        return rssFeedsNode;
-      }, new DocumentFragment());
+      return rssFeedsNode;
+    }, new DocumentFragment());
 
-    if (appState.rssFeeds.length === 0) {
-      renderDefaultFeedsMessage();
-    }
-
-    rssFeedsList.replaceChildren(rssFeedsFragment);
-    resolve();
-  } catch (error) {
-    reject(error);
+  if (appState.rssFeeds.length === 0) {
+    renderDefaultFeedsMessage();
   }
-});
+
+  rssFeedsList.replaceChildren(rssFeedsFragment);
+};
