@@ -1,27 +1,13 @@
 import onChange from 'on-change';
 
 import { savePosts, saveRss } from '@src/rss';
-import { renderDefaultMessages, renderFeeds, renderPosts } from '@src/render';
+import {
+  renderDefaultMessages, renderFeeds, renderPosts, showLoading, hideLoading,
+} from '@src/render';
 import validateRssUrl from '@src/validation';
 import initI18N from '@src/i18n';
 import loadRssStream from '@src/api';
 import parseData from '@src/parser';
-
-// const startLoading = () => {
-//   const rssBtn = document.querySelector('.rss-form__submit-btn span');
-
-//   rssBtn.textContent = '';
-//   rssBtn.classList.add('loading');
-//   rssBtn.setAttribute('disabled', 'disabled');
-// };
-
-// const endLoading = () => {
-//   const rssBtn = document.querySelector('.rss-form__submit-btn span');
-
-//   rssBtn.classList.remove('loading');
-//   rssBtn.textContent = 'Add';
-//   rssBtn.removeAttribute('disabled');
-// };
 
 const handleCopyBtnClick = (event) => {
   const text = event.target.parentNode.textContent.trim();
@@ -58,20 +44,37 @@ const fillAppTitles = (appState) => {
 const getState = () => {
   const appState = {
     i18n: null,
+    isLoading: false,
     feeds: [],
     posts: [],
   };
 
-  const wrappedState = onChange(appState, (path, value, previousValue, applyData) => {
-    console.log({ path });
-    console.log({ value });
-
+  const wrappedState = onChange(appState, (path, value) => {
     if (path === 'feeds') {
       renderFeeds(wrappedState);
     }
 
     if (path === 'posts') {
       renderPosts(wrappedState);
+    }
+
+    if (path === 'isLoading') {
+      if (value) {
+        showLoading();
+      } else {
+        hideLoading();
+      }
+    }
+
+    if (path.startsWith('posts.')) {
+      const [, postIndex, prop] = path.split('.');
+
+      if (prop === 'isReaded' && value) {
+        const { id } = wrappedState.posts[postIndex];
+        const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
+
+        postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
+      }
     }
   });
 
@@ -105,18 +108,17 @@ const init = () => {
 
         validateRssUrl(rssUrl, appState)
           .then((isValid) => {
-            // startLoading();
-
             if (isValid) {
+              appState.isLoading = true;
+
               return loadRssStream(rssUrl)
+                .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
                 .then((data) => parseData(data))
+                .catch(() => { throw new Error(i18n.t(('rssLoadMessages.invalidRSS'))); })
                 .then(({ posts, feed }) => {
                   const newFeed = saveRss(appState.feeds, feed, rssUrl);
 
                   savePosts(appState.posts, posts, newFeed.id);
-                })
-                .catch((error) => {
-                  throw new Error(i18n.t(error.message));
                 });
             }
 
@@ -132,7 +134,7 @@ const init = () => {
           .finally(() => {
             rssInput.focus();
             rssInput.value = '';
-            // endLoading();
+            appState.isLoading = false;
           });
       });
 

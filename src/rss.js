@@ -1,24 +1,23 @@
 /* eslint-disable arrow-body-style */
 import { uniqueId } from 'lodash';
 
-import loadRssStream from '@src/api';
-import parseData from '@src/parser';
-
 let uniquePostId = uniqueId();
 
 export const savePosts = (posts, newPosts, feedId) => {
-  newPosts.forEach((newPost) => {
-    const isPostExists = posts.some((post) => post.title === newPost.title);
-
-    if (!isPostExists) {
-      posts.push({
-        ...newPost,
-        id: uniquePostId += 1,
-        feedId,
-        isReaded: false,
-      });
-    }
+  const addablePosts = newPosts.filter((newPost) => {
+    return !posts.some((post) => post.title === newPost.title);
   });
+
+  posts.splice(0, posts.length, ...addablePosts.map((post) => {
+    uniquePostId += 1;
+
+    return {
+      ...post,
+      id: uniquePostId,
+      feedId,
+      isReaded: false,
+    };
+  }));
 };
 
 let uniqueFeedId = uniqueId();

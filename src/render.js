@@ -62,10 +62,6 @@ export const renderPosts = (appState) => {
 
       if (!isReaded) {
         post.isReaded = true;
-
-        const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
-
-        postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
       }
     });
 
@@ -102,4 +98,20 @@ export const renderFeeds = (appState) => {
   }
 
   rssFeedsList.replaceChildren(rssFeedsFragment);
+};
+
+export const showLoading = () => {
+  const rssBtn = document.querySelector('.rss-form__submit-btn span');
+
+  rssBtn.textContent = '';
+  rssBtn.classList.add('loading');
+  rssBtn.setAttribute('disabled', 'disabled');
+};
+
+export const hideLoading = () => {
+  const rssBtn = document.querySelector('.rss-form__submit-btn span');
+
+  rssBtn.classList.remove('loading');
+  rssBtn.textContent = 'Add';
+  rssBtn.removeAttribute('disabled');
 };

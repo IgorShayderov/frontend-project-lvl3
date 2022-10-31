@@ -3,7 +3,7 @@ const parseData = (data) => {
   const parsedDocument = domParser.parseFromString(data, 'text/xml');
 
   if (parsedDocument.documentElement.tagName !== 'rss') {
-    throw new Error('rssLoadMessages.invalidRSS');
+    throw new Error('Invalid RSS');
   }
 
   const title = parsedDocument.querySelector('title').textContent;
