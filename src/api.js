@@ -11,9 +11,10 @@ const getProxiedUrl = (path) => {
 };
 
 const loadRssStream = (rssPath) => axios.get(getProxiedUrl(rssPath))
+  .catch(() => { throw new Error('rssLoadMessages.networkError'); })
   .then(({ data }) => {
     if (data.status?.error) {
-      throw new Error('Response error');
+      throw new Error('rssLoadMessages.networkError');
     }
 
     return data.contents;

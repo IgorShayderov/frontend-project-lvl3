@@ -34,70 +34,70 @@ export const renderDefaultMessages = (appState) => {
 };
 
 export const renderPosts = (appState) => {
-  const rssPostsList = document.querySelector('.rss-posts-list');
-  const rssPostsFragment = appState.posts.reduce((rssPostsNode, post) => {
-    const {
-      id, link, title, description, isReaded,
-    } = post;
-    const listItem = document.createElement('li');
-    const linkElement = document.createElement('a');
-    const button = document.createElement('button');
+  if (appState.posts.length > 0) {
+    const rssPostsList = document.querySelector('.rss-posts-list');
+    const rssPostsFragment = appState.posts.reduce((rssPostsNode, post) => {
+      const {
+        id, link, title, description,
+      } = post;
 
-    listItem.classList.add('rss-posts-list__item');
-    listItem.setAttribute('data-id', id);
+      const listItem = document.createElement('li');
+      const linkElement = document.createElement('a');
+      const button = document.createElement('button');
 
-    linkElement.setAttribute('href', link);
-    linkElement.setAttribute('target', '_blank');
-    linkElement.classList.add('fw-bold');
-    linkElement.textContent = title;
+      listItem.classList.add('rss-posts-list__item');
+      listItem.setAttribute('data-id', id);
 
-    button.setAttribute('type', 'button');
-    button.textContent = appState.i18n.t('basic.view');
-    button.classList.add('btn');
-    button.classList.add('btn-primary');
-    button.addEventListener('click', () => {
-      showModal({
-        title, description, link,
+      linkElement.setAttribute('href', link);
+      linkElement.setAttribute('target', '_blank');
+      linkElement.classList.add('fw-bold');
+      linkElement.textContent = title;
+
+      button.setAttribute('type', 'button');
+      button.textContent = appState.i18n.t('basic.view');
+      button.classList.add('btn');
+      button.classList.add('btn-primary');
+      button.addEventListener('click', () => {
+        showModal({
+          title, description, link,
+        });
+
+        if (!appState.readedPosts.includes(post.id)) {
+          appState.readedPosts.push(post.id);
+        }
       });
 
-      if (!isReaded) {
-        post.isReaded = true;
-      }
-    });
+      listItem.append(linkElement, button);
+      rssPostsNode.append(listItem);
 
-    listItem.append(linkElement, button);
-    rssPostsNode.append(listItem);
+      return rssPostsNode;
+    }, new DocumentFragment());
 
-    return rssPostsNode;
-  }, new DocumentFragment());
-
-  renderDefaultPostsMessage(appState);
-  rssPostsList.replaceChildren(rssPostsFragment);
+    rssPostsList.replaceChildren(rssPostsFragment);
+  }
 };
 
 export const renderFeeds = (appState) => {
-  const rssFeedsList = document.querySelector('.rss-feeds-list');
-  const rssFeedsFragment = appState.feeds
-    .reduce((rssFeedsNode, { title, description }) => {
-      const listItem = document.createElement('li');
-      const header = document.createElement('h3');
-      const text = document.createElement('p');
+  if (appState.feeds.length > 0) {
+    const rssFeedsList = document.querySelector('.rss-feeds-list');
+    const rssFeedsFragment = appState.feeds
+      .reduce((rssFeedsNode, { title, description }) => {
+        const listItem = document.createElement('li');
+        const header = document.createElement('h3');
+        const text = document.createElement('p');
 
-      listItem.classList.add('rss-feeds-list__item');
-      header.textContent = title;
-      text.textContent = description;
+        listItem.classList.add('rss-feeds-list__item');
+        header.textContent = title;
+        text.textContent = description;
 
-      listItem.append(header, text);
-      rssFeedsNode.append(listItem);
+        listItem.append(header, text);
+        rssFeedsNode.append(listItem);
 
-      return rssFeedsNode;
-    }, new DocumentFragment());
+        return rssFeedsNode;
+      }, new DocumentFragment());
 
-  if (appState.feeds.length === 0) {
-    renderDefaultFeedsMessage();
+    rssFeedsList.replaceChildren(rssFeedsFragment);
   }
-
-  rssFeedsList.replaceChildren(rssFeedsFragment);
 };
 
 export const showLoading = () => {

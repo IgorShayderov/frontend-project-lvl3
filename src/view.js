@@ -9,6 +9,29 @@ import initI18N from '@src/i18n';
 import loadRssStream from '@src/api';
 import parseData from '@src/parser';
 
+const watchRssStreams = (appState) => {
+  const timeout = 5000;
+  let feedIndex = 0;
+
+  window.setTimeout(() => {
+    if (appState.feeds.length === 0) {
+      return watchRssStreams(appState);
+    }
+
+    const { id: feedId, link } = appState.feeds[feedIndex];
+
+    return loadRssStream(link)
+      .then((data) => parseData(data))
+      .then(({ posts }) => {
+        savePosts(appState.posts, posts, feedId);
+        feedIndex = feedIndex < appState.feeds.length - 1 ? feedIndex + 1 : 0;
+      })
+      .finally(() => {
+        watchRssStreams(appState);
+      });
+  }, timeout);
+};
+
 const handleCopyBtnClick = (event) => {
   const text = event.target.parentNode.textContent.trim();
   const rssLink = text.split(' ').at(-1);
@@ -47,6 +70,7 @@ const getState = () => {
     isLoading: false,
     feeds: [],
     posts: [],
+    readedPosts: [],
   };
 
   const wrappedState = onChange(appState, (path, value) => {
@@ -66,15 +90,11 @@ const getState = () => {
       }
     }
 
-    if (path.startsWith('posts.')) {
-      const [, postIndex, prop] = path.split('.');
+    if (path === 'readedPosts') {
+      const id = value.at(-1);
+      const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
 
-      if (prop === 'isReaded' && value) {
-        const { id } = wrappedState.posts[postIndex];
-        const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
-
-        postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
-      }
+      postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
     }
   });
 
@@ -87,8 +107,6 @@ const invalidateInput = (rssInput) => {
 
 const init = () => {
   const appState = getState();
-
-  console.log({ appState });
 
   initI18N()
     .then((i18nInstance) => {
@@ -112,9 +130,7 @@ const init = () => {
               appState.isLoading = true;
 
               return loadRssStream(rssUrl)
-                .catch(() => { throw new Error(i18n.t('rssLoadMessages.networkError')); })
                 .then((data) => parseData(data))
-                .catch(() => { throw new Error(i18n.t(('rssLoadMessages.invalidRSS'))); })
                 .then(({ posts, feed }) => {
                   const newFeed = saveRss(appState.feeds, feed, rssUrl);
 
@@ -122,14 +138,14 @@ const init = () => {
                 });
             }
 
-            throw new Error(appState.i18n.t('rssLoadMessages.ivalidURL'));
+            throw new Error(i18n.t('rssLoadMessages.ivalidURL'));
           })
           .then(() => {
-            setMessage(appState.i18n.t('rssLoadMessages.success'), 'success');
+            setMessage(i18n.t('rssLoadMessages.success'), 'success');
           })
           .catch((error) => {
             invalidateInput(rssInput);
-            setMessage(error.message, 'danger');
+            setMessage(i18n.t(error.message), 'danger');
           })
           .finally(() => {
             rssInput.focus();
@@ -146,6 +162,7 @@ const init = () => {
 
       fillAppTitles(appState);
       renderDefaultMessages(appState);
+      watchRssStreams(appState);
     });
 };
 
