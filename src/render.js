@@ -33,10 +33,9 @@ export const renderDefaultMessages = (appState) => {
   renderDefaultFeedsMessage(appState);
 };
 
-const renderPosts = (posts, appState) => {
-  const { i18n } = appState;
+export const renderPosts = (appState) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
-  const rssPostsFragment = posts.reduce((rssPostsNode, post) => {
+  const rssPostsFragment = appState.posts.reduce((rssPostsNode, post) => {
     const {
       id, link, title, description, isReaded,
     } = post;
@@ -53,7 +52,7 @@ const renderPosts = (posts, appState) => {
     linkElement.textContent = title;
 
     button.setAttribute('type', 'button');
-    button.textContent = 'Просмотр';
+    button.textContent = appState.i18n.t('basic.view');
     button.classList.add('btn');
     button.classList.add('btn-primary');
     button.addEventListener('click', () => {
@@ -66,11 +65,7 @@ const renderPosts = (posts, appState) => {
 
         const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
 
-        if (postNode !== null) {
-          postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
-        } else {
-          throw new Error(i18n.t('appErrors.postNotFound', { id }));
-        }
+        postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
       }
     });
 
@@ -80,17 +75,14 @@ const renderPosts = (posts, appState) => {
     return rssPostsNode;
   }, new DocumentFragment());
 
-  if (posts.length === 0) {
-    renderDefaultPostsMessage();
-  }
-
+  renderDefaultPostsMessage(appState);
   rssPostsList.replaceChildren(rssPostsFragment);
 };
 
-export const renderRss = (appState) => {
+export const renderFeeds = (appState) => {
   const rssFeedsList = document.querySelector('.rss-feeds-list');
-  const rssFeedsFragment = appState.rssFeeds
-    .reduce((rssFeedsNode, { title, description, posts }) => {
+  const rssFeedsFragment = appState.feeds
+    .reduce((rssFeedsNode, { title, description }) => {
       const listItem = document.createElement('li');
       const header = document.createElement('h3');
       const text = document.createElement('p');
@@ -102,12 +94,10 @@ export const renderRss = (appState) => {
       listItem.append(header, text);
       rssFeedsNode.append(listItem);
 
-      renderPosts(posts, appState);
-
       return rssFeedsNode;
     }, new DocumentFragment());
 
-  if (appState.rssFeeds.length === 0) {
+  if (appState.feeds.length === 0) {
     renderDefaultFeedsMessage();
   }
 

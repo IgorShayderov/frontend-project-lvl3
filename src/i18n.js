@@ -16,13 +16,6 @@ const initI18N = () => {
               isExists: 'RSS уже существует',
               networkError: 'Network error',
             },
-            nodeSearchErrors: {
-              messagesField: 'Can\'t find messages field',
-              modal: 'Modal window is not found',
-            },
-            appErrors: {
-              postNotFound: 'Not found post with id {{id}}',
-            },
             emptyState: {
               posts: 'Posts are absent',
               feeds: 'Feeds are absent',
@@ -32,6 +25,7 @@ const initI18N = () => {
               appName: 'RSS aggregator',
               feeds: 'Feeds',
               posts: 'Posts',
+              view: 'View',
             },
           },
         },
@@ -44,13 +38,6 @@ const initI18N = () => {
               isExists: 'RSS уже существует',
               networkError: 'Ошибка сети',
             },
-            nodeSearchErrors: {
-              messagesField: 'Не удалось найти поле для сообщений',
-              modal: 'Не удалось найти модальное окно',
-            },
-            appErrors: {
-              postNotFound: 'Не найден пост с идентификатором {{id}}',
-            },
             emptyState: {
               posts: 'Посты отсутствуют',
               feeds: 'Фиды отсутствуют',
@@ -60,6 +47,7 @@ const initI18N = () => {
               appName: 'RSS агрегатор',
               feeds: 'Фиды',
               posts: 'Посты',
+              view: 'Просмотр',
             },
           },
         },

@@ -6,14 +6,12 @@ const parseData = (data) => {
     throw new Error('rssLoadMessages.invalidRSS');
   }
 
-  const title = parsedDocument.querySelector('title')?.textContent;
-  const description = parsedDocument.querySelector('description')?.textContent;
-  const language = parsedDocument.querySelector('language')?.textContent;
+  const title = parsedDocument.querySelector('title').textContent;
+  const description = parsedDocument.querySelector('description').textContent;
 
   const feed = {
     title,
     description,
-    language,
   };
 
   const items = parsedDocument.querySelectorAll('item');
@@ -21,7 +19,7 @@ const parseData = (data) => {
   const posts = Array.from(items).map((item) => {
     const itemTitle = item.querySelector('title').textContent;
     const itemLink = item.querySelector('link').textContent;
-    const itemDescription = item.querySelector('description')?.textContent;
+    const itemDescription = item.querySelector('description').textContent;
 
     return {
       title: itemTitle,

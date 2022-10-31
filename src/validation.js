@@ -6,7 +6,7 @@ const validateRssUrl = (input, appState) => {
     .required()
     .url()
     .test((rssURL) => {
-      const isValid = !appState.rssFeeds.map(({ link }) => link).includes(rssURL);
+      const isValid = !appState.feeds.map(({ link }) => link).includes(rssURL);
 
       if (isValid) {
         return true;

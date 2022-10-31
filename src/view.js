@@ -1,23 +1,27 @@
-import { getRssStream, watchRssStreams } from '@src/rss';
-import { renderDefaultMessages } from '@src/render';
+import onChange from 'on-change';
+
+import { savePosts, saveRss } from '@src/rss';
+import { renderDefaultMessages, renderFeeds, renderPosts } from '@src/render';
 import validateRssUrl from '@src/validation';
 import initI18N from '@src/i18n';
+import loadRssStream from '@src/api';
+import parseData from '@src/parser';
 
-const startLoading = () => {
-  const rssBtn = document.querySelector('.rss-form__submit-btn span');
+// const startLoading = () => {
+//   const rssBtn = document.querySelector('.rss-form__submit-btn span');
 
-  rssBtn.textContent = '';
-  rssBtn.classList.add('loading');
-  rssBtn.setAttribute('disabled', 'disabled');
-};
+//   rssBtn.textContent = '';
+//   rssBtn.classList.add('loading');
+//   rssBtn.setAttribute('disabled', 'disabled');
+// };
 
-const endLoading = () => {
-  const rssBtn = document.querySelector('.rss-form__submit-btn span');
+// const endLoading = () => {
+//   const rssBtn = document.querySelector('.rss-form__submit-btn span');
 
-  rssBtn.classList.remove('loading');
-  rssBtn.textContent = 'Add';
-  rssBtn.removeAttribute('disabled');
-};
+//   rssBtn.classList.remove('loading');
+//   rssBtn.textContent = 'Add';
+//   rssBtn.removeAttribute('disabled');
+// };
 
 const handleCopyBtnClick = (event) => {
   const text = event.target.parentNode.textContent.trim();
@@ -31,19 +35,14 @@ const handleCopyBtnClick = (event) => {
  * @param {string} message - Text of message
  * @param {'success' | 'danger'} status - Message status
  */
-const setMessage = (message, appState, status = 'success') => {
-  const { i18n } = appState;
+const setMessage = (message, status = 'success') => {
   const messagesField = document.querySelector('.messages-field');
   const isSuccessful = status === 'success';
 
   messagesField.classList.add(isSuccessful ? 'text-success' : 'text-danger');
   messagesField.classList.remove(isSuccessful ? 'text-danger' : 'text-success');
 
-  if (messagesField !== null) {
-    messagesField.textContent = message;
-  } else {
-    throw new Error(i18n.t('nodeSearchErrors.messagesField'));
-  }
+  messagesField.textContent = message;
 };
 
 const fillAppTitles = (appState) => {
@@ -56,67 +55,94 @@ const fillAppTitles = (appState) => {
   document.querySelector('.example').textContent = `${i18n.t('basic.example')}: ${link}`;
 };
 
-const init = () => {
+const getState = () => {
   const appState = {
     i18n: null,
-    rssFeeds: [],
+    feeds: [],
+    posts: [],
   };
+
+  const wrappedState = onChange(appState, (path, value, previousValue, applyData) => {
+    console.log({ path });
+    console.log({ value });
+
+    if (path === 'feeds') {
+      renderFeeds(wrappedState);
+    }
+
+    if (path === 'posts') {
+      renderPosts(wrappedState);
+    }
+  });
+
+  return wrappedState;
+};
+
+const invalidateInput = (rssInput) => {
+  rssInput.classList.add('rss-form__input_invalid');
+};
+
+const init = () => {
+  const appState = getState();
+
+  console.log({ appState });
 
   initI18N()
     .then((i18nInstance) => {
       appState.i18n = i18nInstance;
     })
     .then(() => {
+      const { i18n } = appState;
       const rssForm = document.querySelector('.rss-form');
       const rssInput = rssForm.querySelector('.rss-form__input');
 
       const getRssInputValue = () => rssInput?.value ?? '';
 
-      const invalidateInput = () => {
-        rssInput.classList.add('rss-form__input_invalid');
-      };
+      rssForm.addEventListener('submit', (event) => {
+        event.preventDefault();
 
-      if (rssForm !== null) {
-        rssForm.addEventListener('submit', (event) => {
-          event.preventDefault();
+        const rssUrl = getRssInputValue();
 
-          const rssValue = getRssInputValue();
+        validateRssUrl(rssUrl, appState)
+          .then((isValid) => {
+            // startLoading();
 
-          validateRssUrl(rssValue, appState)
-            .then((isValid) => {
-              startLoading();
+            if (isValid) {
+              return loadRssStream(rssUrl)
+                .then((data) => parseData(data))
+                .then(({ posts, feed }) => {
+                  const newFeed = saveRss(appState.feeds, feed, rssUrl);
 
-              if (isValid) {
-                return getRssStream(rssValue, appState);
-              }
+                  savePosts(appState.posts, posts, newFeed.id);
+                })
+                .catch((error) => {
+                  throw new Error(i18n.t(error.message));
+                });
+            }
 
-              throw new Error(appState.i18n.t('rssLoadMessages.ivalidURL'));
-            })
-            .then(() => {
-              setMessage(appState.i18n.t('rssLoadMessages.success'), appState, 'success');
-            })
-            .catch((error) => {
-              invalidateInput();
-              setMessage(error.message, appState, 'danger');
-            })
-            .finally(() => {
-              rssInput.focus();
-              rssInput.value = '';
-              endLoading();
-            });
-        });
-      }
+            throw new Error(appState.i18n.t('rssLoadMessages.ivalidURL'));
+          })
+          .then(() => {
+            setMessage(appState.i18n.t('rssLoadMessages.success'), 'success');
+          })
+          .catch((error) => {
+            invalidateInput(rssInput);
+            setMessage(error.message, 'danger');
+          })
+          .finally(() => {
+            rssInput.focus();
+            rssInput.value = '';
+            // endLoading();
+          });
+      });
 
-      if (rssInput !== null) {
-        rssInput.addEventListener('keydown', () => {
-          rssInput.classList.remove('rss-form__input_invalid');
-        });
-      }
+      rssInput.addEventListener('keydown', () => {
+        rssInput.classList.remove('rss-form__input_invalid');
+      });
 
       document.querySelector('.copy-btn').addEventListener('click', handleCopyBtnClick);
 
       fillAppTitles(appState);
-      watchRssStreams(appState);
       renderDefaultMessages(appState);
     });
 };
