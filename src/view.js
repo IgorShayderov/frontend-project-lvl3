@@ -1,36 +1,14 @@
 import onChange from 'on-change';
 
-import { savePosts, saveRss } from '@src/rss';
+import { savePosts, saveRss, watchRssStreams } from '@src/rss';
 import {
   renderDefaultMessages, renderFeeds, renderPosts, showLoading, hideLoading,
 } from '@src/render';
+
 import validateRssUrl from '@src/validation';
 import initI18N from '@src/i18n';
 import loadRssStream from '@src/api';
 import parseData from '@src/parser';
-
-const watchRssStreams = (appState) => {
-  const timeout = 5000;
-  let feedIndex = 0;
-
-  window.setTimeout(() => {
-    if (appState.feeds.length === 0) {
-      return watchRssStreams(appState);
-    }
-
-    const { id: feedId, link } = appState.feeds[feedIndex];
-
-    return loadRssStream(link)
-      .then((data) => parseData(data))
-      .then(({ posts }) => {
-        savePosts(appState.posts, posts, feedId);
-        feedIndex = feedIndex < appState.feeds.length - 1 ? feedIndex + 1 : 0;
-      })
-      .finally(() => {
-        watchRssStreams(appState);
-      });
-  }, timeout);
-};
 
 const handleCopyBtnClick = (event) => {
   const text = event.target.parentNode.textContent.trim();
@@ -54,8 +32,7 @@ const setMessage = (message, status = 'success') => {
   messagesField.textContent = message;
 };
 
-const fillAppTitles = (appState) => {
-  const { i18n } = appState;
+const fillAppTitles = (i18n) => {
   const link = 'https://ru.hexlet.io/lessons.rss';
 
   document.querySelector('.app-name').textContent = i18n.t('basic.appName');
@@ -64,22 +41,18 @@ const fillAppTitles = (appState) => {
   document.querySelector('.example').textContent = `${i18n.t('basic.example')}: ${link}`;
 };
 
-const getState = () => {
-  const appState = {
-    i18n: null,
-    isLoading: false,
-    feeds: [],
-    posts: [],
-    readedPosts: [],
-  };
+const invalidateInput = (rssInput) => {
+  rssInput.classList.add('rss-form__input_invalid');
+};
 
-  const wrappedState = onChange(appState, (path, value) => {
+const wrapState = (initialState, i18n) => {
+  const wrappedState = onChange(initialState, (path, value) => {
     if (path === 'feeds') {
       renderFeeds(wrappedState);
     }
 
     if (path === 'posts') {
-      renderPosts(wrappedState);
+      renderPosts(wrappedState, i18n);
     }
 
     if (path === 'isLoading') {
@@ -101,19 +74,11 @@ const getState = () => {
   return wrappedState;
 };
 
-const invalidateInput = (rssInput) => {
-  rssInput.classList.add('rss-form__input_invalid');
-};
-
-const init = () => {
-  const appState = getState();
-
+const init = (initialState) => {
   initI18N()
     .then((i18nInstance) => {
-      appState.i18n = i18nInstance;
-    })
-    .then(() => {
-      const { i18n } = appState;
+      const i18n = i18nInstance;
+      const appState = wrapState(initialState, i18n);
       const rssForm = document.querySelector('.rss-form');
       const rssInput = rssForm.querySelector('.rss-form__input');
 
@@ -160,8 +125,8 @@ const init = () => {
 
       document.querySelector('.copy-btn').addEventListener('click', handleCopyBtnClick);
 
-      fillAppTitles(appState);
-      renderDefaultMessages(appState);
+      fillAppTitles(i18n);
+      renderDefaultMessages(i18n);
       watchRssStreams(appState);
     });
 };

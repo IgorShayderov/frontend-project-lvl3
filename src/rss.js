@@ -1,6 +1,9 @@
 /* eslint-disable arrow-body-style */
 import { uniqueId } from 'lodash';
 
+import loadRssStream from '@src/api';
+import parseData from '@src/parser';
+
 export const savePosts = (posts, newPosts, feedId) => {
   const addablePosts = newPosts.filter((newPost) => {
     return !posts.some((post) => post.title === newPost.title);
@@ -28,23 +31,20 @@ export const saveRss = (feeds, feed, link) => {
   return newFeed;
 };
 
-// export default getRssStream;
+export const watchRssStreams = (appState) => {
+  const timeout = 5000;
 
-// export const watchRssStreams = (appState) => {
-//   const timeout = 5000;
+  window.setTimeout(() => {
+    Promise.all(appState.feeds.map(({ link }) => loadRssStream(link)))
+      .then((dataList) => {
+        dataList.forEach((data, index) => {
+          const { posts } = parseData(data);
+          const { id: feedId } = appState.feeds[index];
 
-//   window.setTimeout(() => {
-//     appState.rssFeeds.forEach((feed) => {
-//       return new Promise((resolve) => {
-//         getRssStream(feed.link, appState)
-//           .then(() => resolve());
-//       });
-//     });
+          savePosts(appState.posts, posts, feedId);
+        });
 
-//     watchRssStreams(appState);
-//   }, timeout);
-// };
-
-// запустили таймаут
-// обновили фид
-// запустили еще один со следующим фидом
+        watchRssStreams(appState);
+      });
+  }, timeout);
+};

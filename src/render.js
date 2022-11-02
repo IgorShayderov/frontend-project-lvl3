@@ -14,26 +14,24 @@ const showModal = ({ title, description, link }) => {
   modal.show();
 };
 
-const renderDefaultPostsMessage = (appState) => {
-  const { i18n } = appState;
+const renderDefaultPostsMessage = (i18n) => {
   const rssPostsList = document.querySelector('.rss-posts-list');
 
   rssPostsList.append(i18n.t('emptyState.posts'));
 };
 
-const renderDefaultFeedsMessage = (appState) => {
-  const { i18n } = appState;
+const renderDefaultFeedsMessage = (i18n) => {
   const rssFeedsList = document.querySelector('.rss-feeds-list');
 
   rssFeedsList.append(i18n.t('emptyState.feeds'));
 };
 
-export const renderDefaultMessages = (appState) => {
-  renderDefaultPostsMessage(appState);
-  renderDefaultFeedsMessage(appState);
+export const renderDefaultMessages = (i18n) => {
+  renderDefaultPostsMessage(i18n);
+  renderDefaultFeedsMessage(i18n);
 };
 
-export const renderPosts = (appState) => {
+export const renderPosts = (appState, i18n) => {
   if (appState.posts.length > 0) {
     const rssPostsList = document.querySelector('.rss-posts-list');
     const rssPostsFragment = appState.posts.reduce((rssPostsNode, post) => {
@@ -54,7 +52,7 @@ export const renderPosts = (appState) => {
       linkElement.textContent = title;
 
       button.setAttribute('type', 'button');
-      button.textContent = appState.i18n.t('basic.view');
+      button.textContent = i18n.t('basic.view');
       button.classList.add('btn');
       button.classList.add('btn-primary');
       button.addEventListener('click', () => {
