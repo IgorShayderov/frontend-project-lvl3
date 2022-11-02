@@ -9,7 +9,7 @@ export const savePosts = (posts, newPosts, feedId) => {
     return !posts.some((post) => post.title === newPost.title);
   });
 
-  posts.splice(0, posts.length, ...addablePosts.map((post) => {
+  posts.push(...addablePosts.map((post) => {
     return {
       ...post,
       id: uniqueId(),

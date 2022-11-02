@@ -2,7 +2,13 @@ import onChange from 'on-change';
 
 import { savePosts, saveRss, watchRssStreams } from '@src/rss';
 import {
-  renderDefaultMessages, renderFeeds, renderPosts, showLoading, hideLoading,
+  renderDefaultMessages,
+  renderFeeds,
+  renderPosts,
+  showLoading,
+  hideLoading,
+  fillAppTitles,
+  setMessage,
 } from '@src/render';
 
 import validateRssUrl from '@src/validation';
@@ -17,30 +23,6 @@ const handleCopyBtnClick = (event) => {
   navigator.clipboard.writeText(rssLink);
 };
 
-/**
- * Sets message in special HTML node
- * @param {string} message - Text of message
- * @param {'success' | 'danger'} status - Message status
- */
-const setMessage = (message, status = 'success') => {
-  const messagesField = document.querySelector('.messages-field');
-  const isSuccessful = status === 'success';
-
-  messagesField.classList.add(isSuccessful ? 'text-success' : 'text-danger');
-  messagesField.classList.remove(isSuccessful ? 'text-danger' : 'text-success');
-
-  messagesField.textContent = message;
-};
-
-const fillAppTitles = (i18n) => {
-  const link = 'https://ru.hexlet.io/lessons.rss';
-
-  document.querySelector('.app-name').textContent = i18n.t('basic.appName');
-  document.querySelector('.posts-title').textContent = i18n.t('basic.posts');
-  document.querySelector('.feeds-title').textContent = i18n.t('basic.feeds');
-  document.querySelector('.example').textContent = `${i18n.t('basic.example')}: ${link}`;
-};
-
 const invalidateInput = (rssInput) => {
   rssInput.classList.add('rss-form__input_invalid');
 };
@@ -52,6 +34,7 @@ const wrapState = (initialState, i18n) => {
     }
 
     if (path === 'posts') {
+      console.log(path);
       renderPosts(wrappedState, i18n);
     }
 

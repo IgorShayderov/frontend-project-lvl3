@@ -113,3 +113,27 @@ export const hideLoading = () => {
   rssBtn.textContent = 'Add';
   rssBtn.removeAttribute('disabled');
 };
+
+/**
+ * Sets message in special HTML node
+ * @param {string} message - Text of message
+ * @param {'success' | 'danger'} status - Message status
+ */
+export const setMessage = (message, status = 'success') => {
+  const messagesField = document.querySelector('.messages-field');
+  const isSuccessful = status === 'success';
+
+  messagesField.classList.add(isSuccessful ? 'text-success' : 'text-danger');
+  messagesField.classList.remove(isSuccessful ? 'text-danger' : 'text-success');
+
+  messagesField.textContent = message;
+};
+
+export const fillAppTitles = (i18n) => {
+  const link = 'https://ru.hexlet.io/lessons.rss';
+
+  document.querySelector('.app-name').textContent = i18n.t('basic.appName');
+  document.querySelector('.posts-title').textContent = i18n.t('basic.posts');
+  document.querySelector('.feeds-title').textContent = i18n.t('basic.feeds');
+  document.querySelector('.example').textContent = `${i18n.t('basic.example')}: ${link}`;
+};
