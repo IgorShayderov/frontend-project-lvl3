@@ -11,7 +11,8 @@ const validateRssUrl = (input, appState) => {
       if (isValid) {
         return true;
       }
-      throw new Error(appState.i18n.t('rssLoadMessages.isExists'));
+
+      throw new Error('rssLoadMessages.isExists');
     });
 
   return rssSchema.isValid(input);

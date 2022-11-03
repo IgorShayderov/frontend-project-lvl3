@@ -8,6 +8,8 @@ const getState = () => {
     feeds: [],
     posts: [],
     readedPosts: [],
+    status: null,
+    errorKey: 'pending',
   };
 
   return appState;

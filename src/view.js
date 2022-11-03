@@ -23,18 +23,16 @@ const handleCopyBtnClick = (event) => {
   navigator.clipboard.writeText(rssLink);
 };
 
-const invalidateInput = (rssInput) => {
-  rssInput.classList.add('rss-form__input_invalid');
-};
-
 const wrapState = (initialState, i18n) => {
+  const rssForm = document.querySelector('.rss-form');
+  const rssInput = rssForm.querySelector('.rss-form__input');
+
   const wrappedState = onChange(initialState, (path, value) => {
     if (path === 'feeds') {
       renderFeeds(wrappedState);
     }
 
     if (path === 'posts') {
-      console.log(path);
       renderPosts(wrappedState, i18n);
     }
 
@@ -43,6 +41,8 @@ const wrapState = (initialState, i18n) => {
         showLoading();
       } else {
         hideLoading();
+        rssInput.focus();
+        rssInput.value = '';
       }
     }
 
@@ -51,6 +51,23 @@ const wrapState = (initialState, i18n) => {
       const postNode = document.querySelector(`.rss-posts-list__item[data-id='${id}']`);
 
       postNode.querySelector('a').classList.replace('fw-bold', 'fw-normal');
+    }
+
+    if (path === 'status') {
+      switch (value) {
+        case 'success':
+          setMessage(i18n.t('rssLoadMessages.success'), 'success');
+          break;
+        case 'error':
+          rssInput.classList.add('rss-form__input_invalid');
+          setMessage(i18n.t(wrappedState.errorKey), 'danger');
+          break;
+        case 'pending':
+          rssInput.classList.remove('rss-form__input_invalid');
+          break;
+        default:
+          throw new Error(i18n.t('errors.unknownStatus', { status: value }));
+      }
     }
   });
 
@@ -65,45 +82,39 @@ const init = (initialState) => {
       const rssForm = document.querySelector('.rss-form');
       const rssInput = rssForm.querySelector('.rss-form__input');
 
-      const getRssInputValue = () => rssInput?.value ?? '';
-
       rssForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        const rssUrl = getRssInputValue();
+        const rssUrl = new FormData(rssForm).get('rss-value');
 
-        validateRssUrl(rssUrl, appState)
+        validateRssUrl(rssUrl, appState, i18n)
           .then((isValid) => {
             if (isValid) {
               appState.isLoading = true;
 
-              return loadRssStream(rssUrl)
-                .then((data) => parseData(data))
-                .then(({ posts, feed }) => {
-                  const newFeed = saveRss(appState.feeds, feed, rssUrl);
-
-                  savePosts(appState.posts, posts, newFeed.id);
-                });
+              return loadRssStream(rssUrl);
             }
 
             throw new Error(i18n.t('rssLoadMessages.ivalidURL'));
           })
-          .then(() => {
-            setMessage(i18n.t('rssLoadMessages.success'), 'success');
+          .then((data) => {
+            const { posts, feed } = parseData(data);
+            const newFeed = saveRss(appState.feeds, feed, rssUrl);
+
+            savePosts(appState.posts, posts, newFeed.id);
+            appState.status = 'success';
           })
           .catch((error) => {
-            invalidateInput(rssInput);
-            setMessage(i18n.t(error.message), 'danger');
+            appState.errorKey = error.message;
+            appState.status = 'error';
           })
           .finally(() => {
-            rssInput.focus();
-            rssInput.value = '';
             appState.isLoading = false;
           });
       });
 
       rssInput.addEventListener('keydown', () => {
-        rssInput.classList.remove('rss-form__input_invalid');
+        appState.status = 'pending';
       });
 
       document.querySelector('.copy-btn').addEventListener('click', handleCopyBtnClick);

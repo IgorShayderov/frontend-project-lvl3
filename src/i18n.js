@@ -20,6 +20,9 @@ const initI18N = () => {
               posts: 'Posts are absent',
               feeds: 'Feeds are absent',
             },
+            errors: {
+              unknownStatus: 'Unknown status - {{status}}',
+            },
             basic: {
               example: 'Example',
               appName: 'RSS aggregator',
@@ -41,6 +44,9 @@ const initI18N = () => {
             emptyState: {
               posts: 'Посты отсутствуют',
               feeds: 'Фиды отсутствуют',
+            },
+            errors: {
+              unknownStatus: 'Неизвестный статус - {{status}}',
             },
             basic: {
               example: 'Пример',
