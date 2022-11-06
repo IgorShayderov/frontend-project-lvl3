@@ -10,6 +10,8 @@ const getState = () => {
     readedPosts: [],
     status: null,
     errorKey: 'pending',
+    isModalShown: false,
+    shownPost: null,
   };
 
   return appState;

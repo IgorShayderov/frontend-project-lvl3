@@ -9,6 +9,7 @@ import {
   hideLoading,
   fillAppTitles,
   setMessage,
+  showModal,
 } from '@src/render';
 
 import validateRssUrl from '@src/validation';
@@ -40,7 +41,7 @@ const wrapState = (initialState, i18n) => {
       if (value) {
         showLoading();
       } else {
-        hideLoading();
+        hideLoading(i18n);
         rssInput.focus();
         rssInput.value = '';
       }
@@ -68,6 +69,11 @@ const wrapState = (initialState, i18n) => {
         default:
           throw new Error(i18n.t('errors.unknownStatus', { status: value }));
       }
+    }
+
+    if (path === 'isModalShown' && value) {
+      showModal(wrappedState.shownPost);
+      wrappedState.isModalShown = false;
     }
   });
 

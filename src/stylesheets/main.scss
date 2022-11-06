@@ -13,9 +13,7 @@ body {
 
 .rss-form {
   display: flex;
-  justify-content: space-between;
   position: relative;
-  max-width: calc(340px + 60px + 10px);
 }
 
 .rss-form__input {
@@ -38,7 +36,6 @@ body {
   margin-left: 10px;
   padding: 6px 10px;
   vertical-align: top;
-  width: 60px;
 
   &:focus {
     background-color: var(--bright-main-color);

@@ -1,6 +1,6 @@
 import { Modal } from 'bootstrap';
 
-const showModal = ({ title, description, link }) => {
+export const showModal = ({ title, description, link }) => {
   const modalNode = document.querySelector('#postsModal');
   const modal = new Modal(modalNode);
   const titleNode = document.querySelector('#postsModalLabel');
@@ -36,7 +36,7 @@ export const renderPosts = (appState, i18n) => {
     const rssPostsList = document.querySelector('.rss-posts-list');
     const rssPostsFragment = appState.posts.reduce((rssPostsNode, post) => {
       const {
-        id, link, title, description,
+        id, link, title,
       } = post;
 
       const listItem = document.createElement('li');
@@ -48,7 +48,7 @@ export const renderPosts = (appState, i18n) => {
 
       linkElement.setAttribute('href', link);
       linkElement.setAttribute('target', '_blank');
-      linkElement.classList.add('fw-bold');
+      linkElement.classList.add(appState.readedPosts.includes(post.id) ? 'fw-normal' : 'fw-bold');
       linkElement.textContent = title;
 
       button.setAttribute('type', 'button');
@@ -56,9 +56,8 @@ export const renderPosts = (appState, i18n) => {
       button.classList.add('btn');
       button.classList.add('btn-primary');
       button.addEventListener('click', () => {
-        showModal({
-          title, description, link,
-        });
+        appState.shownPost = post;
+        appState.isModalShown = true;
 
         if (!appState.readedPosts.includes(post.id)) {
           appState.readedPosts.push(post.id);
@@ -106,11 +105,11 @@ export const showLoading = () => {
   rssBtn.setAttribute('disabled', 'disabled');
 };
 
-export const hideLoading = () => {
+export const hideLoading = (i18n) => {
   const rssBtn = document.querySelector('.rss-form__submit-btn span');
 
   rssBtn.classList.remove('loading');
-  rssBtn.textContent = 'Add';
+  rssBtn.textContent = i18n.t('basic.add');
   rssBtn.removeAttribute('disabled');
 };
 
@@ -136,4 +135,5 @@ export const fillAppTitles = (i18n) => {
   document.querySelector('.posts-title').textContent = i18n.t('basic.posts');
   document.querySelector('.feeds-title').textContent = i18n.t('basic.feeds');
   document.querySelector('.example').textContent = `${i18n.t('basic.example')}: ${link}`;
+  document.querySelector('.rss-form__submit-btn span').textContent = i18n.t('basic.add');
 };
