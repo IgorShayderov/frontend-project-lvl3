@@ -13,7 +13,7 @@
 
 <hr />
 
-<p>RSS Aggregator helps to aggregate rss-link, view them and is able to auto-update existing posts.</p>
+<p>RSS Aggregator helps to aggregate rss-links, view them and is able to auto-update existing posts.</p>
 
 ### Requirements:
 <ul>
