@@ -22,7 +22,6 @@ export const saveRss = (feeds, feed, link) => {
   const newFeed = {
     ...feed,
     id: uniqueId(),
-    posts: [],
     link,
   };
 
