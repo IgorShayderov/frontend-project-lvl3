@@ -1,4 +1,5 @@
 import onChange from 'on-change';
+import i18next from 'i18next';
 
 import { savePosts, saveRss, watchRssStreams } from '@src/rss';
 import {
@@ -13,9 +14,20 @@ import {
 } from '@src/render';
 
 import validateRssUrl from '@src/validation';
-import initI18N from '@src/i18n';
 import loadRssStream from '@src/api';
 import parseData from '@src/parser';
+import resources from './locales/index.js';
+
+const initI18N = () => {
+  const i18nInstance = i18next.createInstance();
+
+  return new Promise((resolve) => {
+    i18nInstance.init({
+      lng: 'ru',
+      resources,
+    }).then(() => resolve(i18nInstance));
+  });
+};
 
 const handleCopyBtnClick = (event) => {
   const text = event.target.parentNode.textContent.trim();
